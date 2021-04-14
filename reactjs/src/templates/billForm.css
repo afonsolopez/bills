@@ -1,0 +1,41 @@
+.grid-container--form--box {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  gap: 16px 16px;
+  height: 100%;
+  width: 100%;
+  /* background-color: cadetblue; */
+  padding: 16px;
+}
+.grid-container--form {
+  display: grid;
+  grid-template-columns: 66.66% 1fr;
+  grid-template-rows: 1fr;
+  gap: 16px 16px;
+  height: 100%;
+  width: 100%;
+}
+
+form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px 16px;
+    height: 100%;
+    width: 100%;
+}
+
+form > div > div {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 16px;
+}
+
+form > div > div:first-child {
+    margin-bottom: 8px;
+}
+
+form input, form select{
+  width: calc(100%) !important;
+  background-color: var(--background);
+}

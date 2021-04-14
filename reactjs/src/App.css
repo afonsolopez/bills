@@ -1,0 +1,201 @@
+.grid-container {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  grid-template-rows: 1fr;
+  /* gap: 16px 16px;
+  grid-template-areas: ". . ."; */
+  height: 100vh;
+  width: 100vw;
+  /* background-color: bisque; */
+}
+.grid-container--box {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 16px 16px;
+  height: 100%;
+  width: 100%;
+  /* background-color: cadetblue; */
+  padding: 16px;
+}
+.grid-container--box--top {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+  gap: 16px 16px;
+}
+.grid-container--box--bottom {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  gap: 16px 16px;
+}
+.grid-container--box--top--double {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(2, 1fr);
+  gap: 16px 16px;
+}
+
+/* Card */
+.card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.card--title {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 150%;
+  /* identical to box height, or 24px */
+}
+
+.card--totalSpent {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 28px;
+  line-height: 150%;
+  /* or 42px */
+}
+
+.card--remainingDays {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 150%;
+  /* identical to box height, or 63px */
+  color: #70777f;
+}
+.card--remainingDays > span {
+  font-size: 42px;
+}
+
+.card__color {
+  background: var(--highlight);
+  color: #ffffff;
+}
+
+/* Sidebar */
+.sideBar {
+  background-color: var(--highlight);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.sideBar--menu {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+}
+
+.sideBar--menu a {
+  height: 32px;
+  width: 32px;
+  margin-bottom: 32px;
+}
+
+.sideBar--menu a:last-of-type {
+  margin-bottom: 0;
+}
+
+/* Btn */
+.btn {
+  border: 0;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 150%;
+  text-align: center;
+  margin: 0;
+}
+.btn:hover {
+  cursor: pointer;
+}
+.btn__text {
+  color: var(--highlight);
+  padding: 8px 16px;
+  background-color: transparent;
+}
+
+.btn__solid {
+  color: var(--background);
+  padding: 8px 16px;
+  background-color: var(--highlight);
+}
+
+.btn__solid:hover {
+  opacity: .75;
+}
+
+.btn__full {
+  width: 100%;
+}
+
+.btn__text:hover {
+  cursor: pointer;
+  background-color: rgba(223, 228, 236, 0.5);
+  /* filter: opacity(.75) */
+}
+
+.btn__add--wrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column
+}
+.btn__add {
+  background: rgba(223, 228, 236, 0.5);
+  border-radius: 128px;
+  padding: 12px 32px;
+  border: none;
+  margin-bottom: 8px;
+}
+
+.btn__add--label {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 150%;
+  text-align: center;
+  color: #70777F;
+}
+
+.btn__add:hover {
+  background-color: transparent;
+}
+.btn__add:hover path{
+  fill:  #5B46EB;
+}
+/* Latest bills table */
+
+.rowHeader {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 150%;
+  color: var(--text-main);
+}
+.rowTitle {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 150%;
+  color: var(--text-main);
+}
+.rowPrice {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 150%;
+  color: #70777F;
+}
