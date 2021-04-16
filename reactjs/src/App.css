@@ -55,7 +55,12 @@
   line-height: 150%;
   /* identical to box height, or 24px */
 }
-
+.card--switch-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-direction: column;
+}
 .card--totalSpent {
   font-style: normal;
   font-weight: bold;

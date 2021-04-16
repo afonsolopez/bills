@@ -14,3 +14,13 @@ type Res struct {
 	Tag          string `json:"tag"`
 	Date         string `json:"date"`
 }
+
+type AllTags struct {
+	Label string `json:"label"`
+	Value string `json:"value"`
+}
+
+type AllCompanies struct {
+	Label string `json:"label"`
+	Value string `json:"value"`
+}

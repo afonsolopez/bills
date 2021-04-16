@@ -2,42 +2,51 @@ import React, { useState, useEffect } from "react";
 import "./billForm.css";
 
 function BillForm() {
+  
+  // Here we handle all inputs data
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [company, setCompany] = useState("");
   const [tag, setTag] = useState("");
   const [date, setDate] = useState("");
-  const [companies] = React.useState([
+  const [companies, setCompanies] = useState([
     {
-      label: "Luke Skywalker",
-      value: "Luke Skywalker",
+      label: "",
+      value: "",
     },
-    { label: "C-3PO", value: "C-3PO" },
-    { label: "R2-D2", value: "R2-D2" },
   ]);
-  const [tags] = React.useState([
+  const [tags, setTags] = useState([
     {
-      label: "Luke Skywalker",
-      value: "Luke Skywalker",
+      label: "",
+      value: "",
     },
-    { label: "C-3PO", value: "C-3PO" },
-    { label: "R2-D2", value: "R2-D2" },
   ]);
 
+  // Those hooks handles a bool value fow new "tags" or "companies" inputs
   const [isNewCompany, setIsNewCompany] = useState(false);
-  const [companyInput, setCompanyInput] = useState(<></>);
   const [isNewTag, setIsNewTag] = useState(false);
-  const [tagInput, setTagInput] = useState(<></>);
 
+  // Stores the rendered options from each select input
+  const [companyInput, setCompanyInput] = useState(<></>);
+  const [tagInput, setTagInput] = useState(<></>);
+  
+  // Handles a bool value if the for is ready to be send
+  const [isDone, setIsDone] = useState(true);
+
+  // 
+  const formId = "something";
+
+  // Functions to turn the "new company" and "new tag" inputs on/off
   const handleClick = () => {
     setCompany("");
     setIsNewCompany(!isNewCompany);
-  }
-    const handleClick2 = () => {
+  };
+  const handleClick2 = () => {
     setTag("");
     setIsNewTag(!isNewTag);
-  }
-  const formId = "something";
+  };
+
+  
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
@@ -62,12 +71,62 @@ function BillForm() {
 
   useEffect(() => {
     let mounted = true;
+
+    fetch(`${process.env.REACT_APP_API_PATH || ""}/getAllCompanies`, {
+      // mode: 'no-cors',
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    }).then((response) => {
+      if (mounted) {
+        if (response.ok) {
+          response.json().then((json) => {
+            setCompanies(json);
+            console.log(json);
+          });
+        }
+      }
+    });
+
+    return function cleanup() {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+
+    fetch(`${process.env.REACT_APP_API_PATH || ""}/getAllTags`, {
+      // mode: 'no-cors',
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    }).then((response) => {
+      if (mounted) {
+        if (response.ok) {
+          response.json().then((json) => {
+            setTags(json);
+            console.log(json);
+          });
+        }
+      }
+    });
+
+    return function cleanup() {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
     let thisCompanyInput;
     let thisTagInput;
     if (mounted) {
       if (isNewCompany) {
         thisCompanyInput = (
-          <>
+          <div>
             <label htmlFor="newCompany">Register a new company</label>
             <br />
             <input
@@ -78,35 +137,37 @@ function BillForm() {
               value={company}
               onChange={(e) => setCompany(e.target.value)}
             />
-          </>
+          </div>
         );
         setCompanyInput(thisCompanyInput);
       } else {
         thisCompanyInput = (
-          <>
+          <div>
             <label htmlFor="company">Select company from list</label>
             <br />
-            <select 
-            name="company"
-            // value={company}
-            value={"DEFAULT"}
-            onChange={e => setCompany(e.currentTarget.value)}
+            <select
+              name="company"
+              // value={company}
+              value={company || "DEFAULT"}
+              onChange={(e) => setCompany(e.target.value)}
             >
-              <option value="DEFAULT" disabled hidden>Please Choose...</option>
+              <option value="DEFAULT" disabled hidden>
+                Please Choose...
+              </option>
               {companies.map((c) => (
                 <option key={c.value} value={c.value}>
                   {c.label}
                 </option>
               ))}
             </select>
-          </>
+          </div>
         );
         setCompanyInput(thisCompanyInput);
       }
 
       if (isNewTag) {
         thisTagInput = (
-          <>
+          <div>
             <label htmlFor="newTag">Register a new tag</label>
             <br />
             <input
@@ -117,28 +178,29 @@ function BillForm() {
               value={tag}
               onChange={(e) => setTag(e.target.value)}
             />
-          </>
+          </div>
         );
         setTagInput(thisTagInput);
       } else {
         thisTagInput = (
-          <>
+          <div>
             <label htmlFor="newTag">Select a new tag</label>
             <br />
-            <select 
-            name="newTag"
-            // value={tag}
-            value={"DEFAULT"}
-            onChange={e => setTag(e.currentTarget.value)}
+            <select
+              name="newTag"
+              value={tag || "DEFAULT"}
+              onChange={(e) => setTag(e.target.value)}
             >
-               <option value="DEFAULT" disabled hidden>Please Choose...</option>
+              <option value="DEFAULT" disabled hidden>
+                Please Choose...
+              </option>
               {tags.map((t) => (
                 <option key={t.value} value={t.value}>
                   {t.label}
                 </option>
               ))}
             </select>
-          </>
+          </div>
         );
         setTagInput(thisTagInput);
       }
@@ -147,6 +209,57 @@ function BillForm() {
       mounted = false;
     };
   }, [company, tag, isNewCompany, isNewTag, tags, companies]);
+
+  const regxPrice = /^[0-9]+(\.[0-9]{1,2})?$/gm;
+  const regxDate = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/;
+
+  let checkTitleInput = title.length <= 0;
+  let checkPriceinput = !regxPrice.test(price.replace(",", "."));
+  let checkDateInput = !regxDate.test(date);
+  let checkCompanyInput = !company;
+  let checkTagInput = !tag;
+  function colorValidator(condition) {
+    if (condition) {
+      return {
+        color: "var(--text-muted)",
+      };
+    } else {
+      return {
+        color: "var(--text-main)",
+      };
+    }
+  }
+
+  let titleValidator = colorValidator(checkTitleInput);
+  let priceValidator = colorValidator(checkPriceinput);
+  let dateValidator = colorValidator(checkDateInput);
+  let companyValidator = colorValidator(checkCompanyInput);
+  let tagValidator = colorValidator(checkTagInput);
+
+  useEffect(() => {
+    let mounted = true;
+    if (mounted) {
+      if (
+        !checkTitleInput &&
+        !checkPriceinput &&
+        !checkDateInput &&
+        !checkCompanyInput &&
+        !checkTagInput
+      ) {
+        setIsDone(false);
+      }
+    }
+
+    return function cleanup() {
+      mounted = false;
+    };
+  }, [
+    checkTitleInput,
+    checkPriceinput,
+    checkDateInput,
+    checkCompanyInput,
+    checkTagInput,
+  ]);
 
   return (
     <div className="grid-container--form--box">
@@ -171,7 +284,7 @@ function BillForm() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="price">Price (R$)</label>
+                  <label htmlFor="price">Price ($)</label>
                   <br />
                   <input
                     placeholder="0.00"
@@ -190,16 +303,16 @@ function BillForm() {
                 <p className="card--title">Company</p>
               </div>
               <div>
-                <div>
-                <p>Create new company</p>
+                <div className="card--switch-wrapper">
+                  <p>Create new company</p>
                   <label className="switch">
                     <input
-                    type="checkbox"
-                    id="isNewContact"
-                    name="isNewContact"
-                    onClick={handleClick}
-                    checked={isNewCompany}
-                    onChange={(e) => setIsNewCompany(e.target.checked)}
+                      type="checkbox"
+                      id="isNewContact"
+                      name="isNewContact"
+                      onClick={handleClick}
+                      checked={isNewCompany}
+                      onChange={(e) => setIsNewCompany(e.target.checked)}
                     />
                     <span className="slider round"></span>
                   </label>
@@ -213,16 +326,16 @@ function BillForm() {
                 <p className="card--title">Tags</p>
               </div>
               <div>
-                <div>
+                <div className="card--switch-wrapper">
                   <p>Create new tag</p>
-                <label className="switch">
+                  <label className="switch">
                     <input
-                    type="checkbox"
-                    id="isNewTag"
-                    name="isNewTag"
-                    onClick={handleClick2}
-                    checked={isNewTag}
-                    onChange={(e) => setIsNewTag(e.target.checked)}
+                      type="checkbox"
+                      id="isNewTag"
+                      name="isNewTag"
+                      onClick={handleClick2}
+                      checked={isNewTag}
+                      onChange={(e) => setIsNewTag(e.target.checked)}
                     />
                     <span className="slider round"></span>
                   </label>
@@ -242,6 +355,7 @@ function BillForm() {
                   <input
                     type="text"
                     id="date"
+                    placeholder="yyyy-mm-dd"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
                   />
@@ -254,17 +368,36 @@ function BillForm() {
         <div className="card">
           <div>
             <p className="card--title">Checkout</p>
-            <ul>
-              <li>{title}</li>
-              <li>{price}</li>
-              <li>{company}</li>
-              <li>{tag}</li>
-              <li>{date}</li>
-            </ul>
+            <hr />
+            <br />
+            <p style={titleValidator}>
+              <b>Title:</b> <br />
+              {title}
+            </p>
+            <br />
+            <p style={priceValidator}>
+              <b>Price:</b>
+              <br /> $ {price.replace(",", ".")}
+            </p>
+            <br />
+            <p style={companyValidator}>
+              <b>Company:</b> <br />
+              {company}
+            </p>
+            <br />
+            <p style={tagValidator}>
+              <b>Tags:</b> <br />
+              {tag}
+            </p>
+            <br />
+            <p style={dateValidator}>
+              <b>Date:</b> <br /> {date.toString().replace(/-/g, "/")}
+            </p>
           </div>
           <button
             type="submit"
             form={formId}
+            disabled={isDone}
             className="btn btn__solid btn__full"
           >
             Register new bill
