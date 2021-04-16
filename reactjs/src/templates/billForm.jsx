@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import "./billForm.css";
 
 function BillForm() {
-  
   // Here we handle all inputs data
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
@@ -29,11 +28,11 @@ function BillForm() {
   // Stores the rendered options from each select input
   const [companyInput, setCompanyInput] = useState(<></>);
   const [tagInput, setTagInput] = useState(<></>);
-  
+
   // Handles a bool value if the for is ready to be send
   const [isDone, setIsDone] = useState(true);
 
-  // 
+  // Store a ID for the form element in a way to make it callable by other elements
   const formId = "something";
 
   // Functions to turn the "new company" and "new tag" inputs on/off
@@ -46,8 +45,7 @@ function BillForm() {
     setIsNewTag(!isNewTag);
   };
 
-  
-
+  // Click ation to handle the form submit trought post request
   const handleSubmit = (evt) => {
     evt.preventDefault();
 
@@ -69,6 +67,7 @@ function BillForm() {
     console.log("bill data sent");
   };
 
+  // Effect hook to fetch all registerd company names on database
   useEffect(() => {
     let mounted = true;
 
@@ -94,6 +93,7 @@ function BillForm() {
     };
   }, []);
 
+  // Effect hook to fetch all registerd tag names on database
   useEffect(() => {
     let mounted = true;
 
@@ -119,6 +119,7 @@ function BillForm() {
     };
   }, []);
 
+  // Effect hook to render conditionally the "company" and "tag" inputs
   useEffect(() => {
     let mounted = true;
     let thisCompanyInput;
@@ -210,32 +211,18 @@ function BillForm() {
     };
   }, [company, tag, isNewCompany, isNewTag, tags, companies]);
 
+  // Define some RegEx rules to validade inputs
   const regxPrice = /^[0-9]+(\.[0-9]{1,2})?$/gm;
   const regxDate = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/;
 
+  // Set of variables of inputs validation logic
   let checkTitleInput = title.length <= 0;
   let checkPriceinput = !regxPrice.test(price.replace(",", "."));
   let checkDateInput = !regxDate.test(date);
   let checkCompanyInput = !company;
   let checkTagInput = !tag;
-  function colorValidator(condition) {
-    if (condition) {
-      return {
-        color: "var(--text-muted)",
-      };
-    } else {
-      return {
-        color: "var(--text-main)",
-      };
-    }
-  }
 
-  let titleValidator = colorValidator(checkTitleInput);
-  let priceValidator = colorValidator(checkPriceinput);
-  let dateValidator = colorValidator(checkDateInput);
-  let companyValidator = colorValidator(checkCompanyInput);
-  let tagValidator = colorValidator(checkTagInput);
-
+  // Hook effect to turn the submit form button on/off
   useEffect(() => {
     let mounted = true;
     if (mounted) {
@@ -260,6 +247,26 @@ function BillForm() {
     checkCompanyInput,
     checkTagInput,
   ]);
+
+  // Function that receives a condition and returns a specific color for that input state
+  function colorValidator(condition) {
+    if (condition) {
+      return {
+        color: "var(--text-muted)",
+      };
+    } else {
+      return {
+        color: "var(--text-main)",
+      };
+    }
+  }
+
+  // Set of variables to handle style checkers for the checkout list card
+  let titleValidator = colorValidator(checkTitleInput);
+  let priceValidator = colorValidator(checkPriceinput);
+  let dateValidator = colorValidator(checkDateInput);
+  let companyValidator = colorValidator(checkCompanyInput);
+  let tagValidator = colorValidator(checkTagInput);
 
   return (
     <div className="grid-container--form--box">
