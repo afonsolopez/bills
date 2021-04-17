@@ -56,7 +56,7 @@ function BillForm() {
       },
       body: JSON.stringify({
         title: title,
-        price: price,
+        price: price.replace(",","."),
         isNewCompany: isNewCompany,
         company: company,
         isNewTag: isNewTag,
@@ -81,7 +81,9 @@ function BillForm() {
       if (mounted) {
         if (response.ok) {
           response.json().then((json) => {
-            setCompanies(json);
+            if (json !== null) {
+              setCompanies(json);
+            }
             console.log(json);
           });
         }
@@ -107,7 +109,9 @@ function BillForm() {
       if (mounted) {
         if (response.ok) {
           response.json().then((json) => {
+            if (json !== null) {
             setTags(json);
+            }
             console.log(json);
           });
         }

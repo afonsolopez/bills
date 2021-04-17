@@ -30,7 +30,9 @@ function App() {
       if (mounted) {
         if (response.ok) {
           response.json().then((json) => {
-            setState(json);
+            if (json !== null) {
+              setState(json);
+              }
             console.log(json);
           });
         }

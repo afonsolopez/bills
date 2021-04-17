@@ -9,10 +9,10 @@ import (
 	"github.com/afonsolopez/bills/setup"
 )
 
-var bills []models.Bill
+// var bills []models.Bill
 
 func GetAllBills(w http.ResponseWriter, r *http.Request) {
-	setup.DB.Preload("Company").Joins("Date").Preload("Tags").Order("Date__time_stamp desc").Limit(10).Find(&bills)
+	setup.DB.Joins("Company").Joins("Tag").Joins("Date").Order("Date__time_stamp desc").Limit(10).Find(&bills)
 
 	// Create Message JSON data
 	// message := &bills

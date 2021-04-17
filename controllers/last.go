@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -10,12 +9,12 @@ import (
 	"github.com/afonsolopez/bills/setup"
 )
 
-// var bills []models.Bill
+var bills []models.Bill
 
 // GetLastMonthBills ...
 func GetLastMonthBills(w http.ResponseWriter, r *http.Request) {
 
-	// Gets the actual timestamp
+	// // Gets the actual timestamp
 	now := time.Now()
 	currentYear, currentMonth, _ := now.Date()
 	// Gets the actual location
@@ -23,7 +22,7 @@ func GetLastMonthBills(w http.ResponseWriter, r *http.Request) {
 	// Finds the first day of the actual month
 	firstOfMonth := time.Date(currentYear, currentMonth, 1, 0, 0, 0, 0, currentLocation)
 	// Query between the range of entire months choosed
-	setup.DB.Preload("Company").Joins("Date").Preload("Tags").Where("Date__time_stamp BETWEEN ? AND ?", firstOfMonth, now).Order("Date__time_stamp asc").Find(&bills)
+	setup.DB.Joins("Company").Joins("Tag").Joins("Date").Where("Date__time_stamp BETWEEN ? AND ?", firstOfMonth, now).Order("Date__time_stamp desc").Find(&bills)
 	// Variable to store slice of processed bills
 	var getBills []models.JsonBill
 	// Process each bill and inject it to "getBills"
@@ -37,8 +36,6 @@ func GetLastMonthBills(w http.ResponseWriter, r *http.Request) {
 		}
 		getBills = append(getBills, r)
 	}
-
-	fmt.Println(getBills)
 
 	// Generates a response struct and inject all the processed bill on it
 	res := models.Response{

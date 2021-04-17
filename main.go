@@ -33,7 +33,7 @@ func main() {
 	}
 
 	// Migrate the schema
-	setup.DB.AutoMigrate(&models.Bill{})
+	setup.DB.AutoMigrate(&models.Bill{}, models.Company{}, models.Date{}, models.Tag{})
 
 	// Handle to ./reactjs/build folder on root path
 	http.HandleFunc("/", rootHandler)
