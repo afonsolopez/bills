@@ -2,7 +2,6 @@ import React from "react";
 import ButtonText from "../../atoms/btn-text";
 
 function LatestBills(props) {
-
   console.log(props.bills);
 
   let rows;
@@ -10,8 +9,12 @@ function LatestBills(props) {
     let billsList = props.bills.slice(0, 4);
     let billsTable = billsList.map((b, index) => (
       <tr key={index}>
-        <td className="rowTitle">{b.company}</td>
-        <td className="rowPrice">R$ {b.price}</td>
+        <td className="rowTitle">
+          <p>{b.company}</p>
+        </td>
+        <td className="rowPrice">
+          <p>{b.price.toFixed(2)}</p>
+        </td>
       </tr>
     ));
     rows = billsTable;
@@ -31,7 +34,7 @@ function LatestBills(props) {
         <thead>
           <tr>
             <th className="rowHeader">Company</th>
-            <th className="rowHeader">Price</th>
+            <th className="rowHeader">Price ($)</th>
           </tr>
         </thead>
         <tbody>{rows}</tbody>

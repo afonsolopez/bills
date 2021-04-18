@@ -204,3 +204,10 @@
   line-height: 150%;
   color: #70777F;
 }
+.rowTitle > p,
+.rowPrice > p {
+  white-space: nowrap;
+  width: 10ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

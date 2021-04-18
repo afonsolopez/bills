@@ -40,24 +40,7 @@ func CreateNewBill(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// if msg.IsNewCompany {
-	// 	setup.DB.Create(&models.Company{
-	// 		Name: msg.Company,
-	// 	})
-	// }
-
 	// setup.DB.Where("name = ?", msg.Company).First(&companies)
-
-	// var responses []models.Comp
-
-	// for _, c := range companies {
-	// 	r := models.Comp{
-	// 		ID:   c.ID,
-	// 		Name: c.Name,
-	// 	}
-	// 	responses = append(responses, r)
-	// }
-	// fmt.Println(responses)
 
 	price, err := strconv.ParseFloat(msg.Price, 64)
 	if err != nil {
@@ -66,20 +49,73 @@ func CreateNewBill(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	setup.DB.Create(&models.Bill{
-		// Model:     gorm.Model{},
-		CompanyID: 0,
-		Company:   models.Company{Name: msg.Company},
-		Title:     msg.Title,
-		Price:     price,
-		DateID:    0,
-		Date:      models.Date{TimeStamp: AfterCreate(msg.Date)},
-		TagID:     0,
-		Tag:       models.Tag{Name: msg.Tag},
-	})
+	insert := &models.Bill{
+		Title:  msg.Title,
+		Price:  price,
+		DateID: 0,
+		Date:   models.Date{TimeStamp: AfterCreate(msg.Date)},
+	}
+
+	if msg.IsNewCompany {
+		fmt.Println("This insert will create a new company record")
+		insert.Company = models.Company{Name: msg.Company}
+	} else {
+		fmt.Println("This insert will use an older company record")
+
+		setup.DB.First(&companies, "name = ?", msg.Company)
+
+		var getCompanyId []models.Companies
+
+		for _, c := range companies {
+			r := models.Companies{
+				ID:   c.ID,
+				Name: c.Name,
+			}
+			getCompanyId = append(getCompanyId, r)
+		}
+		fmt.Println(getCompanyId)
+
+		insert.CompanyID = int(getCompanyId[0].ID)
+	}
+
+	if msg.IsNewTag {
+		fmt.Println("This insert will create a new Tag record")
+		insert.Tag = models.Tag{Name: msg.Tag}
+	} else {
+		fmt.Println("This insert will use an older Tag record")
+
+		setup.DB.First(&tags, "name = ?", msg.Tag)
+
+		var getTagId []models.Tags
+
+		for _, c := range tags {
+			r := models.Tags{
+				ID:   c.ID,
+				Name: c.Name,
+			}
+			getTagId = append(getTagId, r)
+		}
+		fmt.Println(getTagId)
+
+		insert.TagID = int(getTagId[0].ID)
+	}
+
+	// setup.DB.Create(&models.Bill{
+	// 	// Model:     gorm.Model{},
+	// 	CompanyID: 0,
+	// 	Company:   models.Company{Name: msg.Company},
+	// 	Title:     msg.Title,
+	// 	Price:     price,
+	// 	DateID:    0,
+	// 	Date:      models.Date{TimeStamp: AfterCreate(msg.Date)},
+	// 	TagID:     0,
+	// 	Tag:       models.Tag{Name: msg.Tag},
+	// })
+
+	setup.DB.Create(&insert)
 
 	// Marshal
-	output, err := json.Marshal(msg)
+	output, err := json.Marshal(&insert)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return

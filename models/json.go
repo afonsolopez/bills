@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"math"
 	"time"
 )
 
@@ -22,7 +23,7 @@ func (r *Response) TotalValue() float64 {
 	for _, i := range r.Bills {
 		sum += i.Price
 	}
-	return sum
+	return math.Ceil(sum*100) / 100
 }
 
 func (r *Response) RemainingDays() int {

@@ -15,7 +15,7 @@ function NewBill() {
     <div className="card">
       <p className="card--title">Insert new bill</p>
       <div style={flexCenter}>
-        <ButtonAdd path="/" />
+        <ButtonAdd path="/new" />
       </div>
     </div>
   );
