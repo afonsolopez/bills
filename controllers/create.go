@@ -100,18 +100,6 @@ func CreateNewBill(w http.ResponseWriter, r *http.Request) {
 		insert.TagID = int(getTagId[0].ID)
 	}
 
-	// setup.DB.Create(&models.Bill{
-	// 	// Model:     gorm.Model{},
-	// 	CompanyID: 0,
-	// 	Company:   models.Company{Name: msg.Company},
-	// 	Title:     msg.Title,
-	// 	Price:     price,
-	// 	DateID:    0,
-	// 	Date:      models.Date{TimeStamp: AfterCreate(msg.Date)},
-	// 	TagID:     0,
-	// 	Tag:       models.Tag{Name: msg.Tag},
-	// })
-
 	setup.DB.Create(&insert)
 
 	// Marshal
@@ -120,7 +108,6 @@ func CreateNewBill(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	// json.NewEncoder(w).Encode(companies)
 
 	// Set header Content-Type
 	w.Header().Set("Access-Control-Allow-Origin", "*")

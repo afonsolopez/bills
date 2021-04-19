@@ -20,7 +20,7 @@ function BillForm() {
       value: "",
     },
   ]);
-
+const [message, setMessage] = useState({status: 200, text: "Invalid call..."});
   // Those hooks handles a bool value fow new "tags" or "companies" inputs
   const [isNewCompany, setIsNewCompany] = useState(false);
   const [isNewTag, setIsNewTag] = useState(false);
@@ -32,6 +32,28 @@ function BillForm() {
   // Handles a bool value if the for is ready to be send
   const [isDone, setIsDone] = useState(true);
 
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const checkModal = (modalOpen) => {
+    if (modalOpen) {
+      return {display: "block"};
+    }
+      return {display: "none"};
+  };
+
+  let modalStyle = checkModal(modalOpen);
+  
+  const closeModal = (e) => {
+    e.preventDefault();
+    setTitle("")
+    setPrice("");
+    setIsNewCompany(false);
+    setCompany("");
+    setIsNewTag(false);
+    setTag("");
+    setDate("");
+    setModalOpen(false);
+  }
   // Store a ID for the form element in a way to make it callable by other elements
   const formId = "something";
 
@@ -63,8 +85,17 @@ function BillForm() {
         tag: tag,
         date: date,
       }),
-    });
-    console.log("bill data sent");
+    })
+    .then(response => {
+      console.log("bill data sent");
+      console.log(response)
+      setMessage({status: 201, text: "Bill registerd with success."})
+      setModalOpen(true);
+    }
+    ).catch(function(error) {
+      console.log(error);
+      setMessage({status: 500, text: "Bill cannot be registered, please, try again later."})
+  });
   };
 
   // Effect hook to fetch all registerd company names on database
@@ -273,6 +304,7 @@ function BillForm() {
   let tagValidator = colorValidator(checkTagInput);
 
   return (
+    <>
     <div className="grid-container--form--box">
       <div className="grid-container--form">
         <div className="card">
@@ -416,6 +448,23 @@ function BillForm() {
         </div>
       </div>
     </div>
+    <div id="myModal" className="modal" style={modalStyle}>
+    
+
+      <div className="modal-content">
+        <span onClick={(e) => closeModal(e)} className="close">&times;</span>
+        <p>{message.text}</p>
+        <br/>
+        <button
+            className="btn btn__solid"
+            onClick={(e) => closeModal(e)}
+          >
+            Return
+          </button>
+      </div>
+    
+    </div>
+    </>
   );
 }
 
