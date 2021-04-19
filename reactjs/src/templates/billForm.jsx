@@ -20,7 +20,13 @@ function BillForm() {
       value: "",
     },
   ]);
-const [message, setMessage] = useState({status: 200, text: "Invalid call..."});
+
+  // Response message from form hook state
+  const [message, setMessage] = useState({
+    status: 200,
+    text: "Invalid call...",
+  });
+
   // Those hooks handles a bool value fow new "tags" or "companies" inputs
   const [isNewCompany, setIsNewCompany] = useState(false);
   const [isNewTag, setIsNewTag] = useState(false);
@@ -32,20 +38,23 @@ const [message, setMessage] = useState({status: 200, text: "Invalid call..."});
   // Handles a bool value if the for is ready to be send
   const [isDone, setIsDone] = useState(true);
 
+  // Handle when to show or not the modal
   const [modalOpen, setModalOpen] = useState(false);
 
+  // Change the display mode of the modal based on it state
   const checkModal = (modalOpen) => {
     if (modalOpen) {
-      return {display: "block"};
+      return { display: "block" };
     }
-      return {display: "none"};
+    return { display: "none" };
   };
 
   let modalStyle = checkModal(modalOpen);
-  
+
+  // Close and reset form button handler
   const closeModal = (e) => {
     e.preventDefault();
-    setTitle("")
+    setTitle("");
     setPrice("");
     setIsNewCompany(false);
     setCompany("");
@@ -53,7 +62,7 @@ const [message, setMessage] = useState({status: 200, text: "Invalid call..."});
     setTag("");
     setDate("");
     setModalOpen(false);
-  }
+  };
   // Store a ID for the form element in a way to make it callable by other elements
   const formId = "something";
 
@@ -78,7 +87,7 @@ const [message, setMessage] = useState({status: 200, text: "Invalid call..."});
       },
       body: JSON.stringify({
         title: title,
-        price: price.replace(",","."),
+        price: price.replace(",", "."),
         isNewCompany: isNewCompany,
         company: company,
         isNewTag: isNewTag,
@@ -86,16 +95,21 @@ const [message, setMessage] = useState({status: 200, text: "Invalid call..."});
         date: date,
       }),
     })
-    .then(response => {
-      console.log("bill data sent");
-      console.log(response)
-      setMessage({status: 201, text: "Bill registerd with success."})
-      setModalOpen(true);
-    }
-    ).catch(function(error) {
-      console.log(error);
-      setMessage({status: 500, text: "Bill cannot be registered, please, try again later."})
-  });
+      // Submit form response if 201 status
+      .then((response) => {
+        console.log("bill data sent");
+        console.log(response);
+        setMessage({ status: 201, text: "Bill registerd with success." });
+        setModalOpen(true);
+      })
+      // Submit form error catch response
+      .catch(function (error) {
+        console.log(error);
+        setMessage({
+          status: 500,
+          text: "Bill cannot be registered, please, try again later.",
+        });
+      });
   };
 
   // Effect hook to fetch all registerd company names on database
@@ -141,7 +155,7 @@ const [message, setMessage] = useState({status: 200, text: "Invalid call..."});
         if (response.ok) {
           response.json().then((json) => {
             if (json !== null) {
-            setTags(json);
+              setTags(json);
             }
             console.log(json);
           });
@@ -305,165 +319,164 @@ const [message, setMessage] = useState({status: 200, text: "Invalid call..."});
 
   return (
     <>
-    <div className="grid-container--form--box">
-      <div className="grid-container--form">
-        <div className="card">
-          <form id={formId} onSubmit={handleSubmit}>
-            <div>
-              <div>
-                <p className="card--title">Bill info</p>
-              </div>
+    
+      <div className="grid-container--form--box">
+        <div className="grid-container--form">
+          <div className="card">
+            <form id={formId} onSubmit={handleSubmit}>
               <div>
                 <div>
-                  <label htmlFor="title">Title</label>
-                  <br />
-                  <input
-                    placeholder="Give it a custom title..."
-                    type="text"
-                    id="title"
-                    name="title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
+                  <p className="card--title">Bill info</p>
                 </div>
                 <div>
-                  <label htmlFor="price">Price ($)</label>
-                  <br />
-                  <input
-                    placeholder="0.00"
-                    type="text"
-                    id="price"
-                    name="price"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <div>
-                <p className="card--title">Company</p>
-              </div>
-              <div>
-                <div className="card--switch-wrapper">
-                  <p>Create new company</p>
-                  <label className="switch">
+                  <div>
+                    <label htmlFor="title">Title</label>
+                    <br />
                     <input
-                      type="checkbox"
-                      id="isNewContact"
-                      name="isNewContact"
-                      onClick={handleClick}
-                      checked={isNewCompany}
-                      onChange={(e) => setIsNewCompany(e.target.checked)}
+                      placeholder="Give it a custom title..."
+                      type="text"
+                      id="title"
+                      name="title"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
                     />
-                    <span className="slider round"></span>
-                  </label>
-                </div>
-                <div>{companyInput}</div>
-              </div>
-            </div>
-
-            <div>
-              <div>
-                <p className="card--title">Tags</p>
-              </div>
-              <div>
-                <div className="card--switch-wrapper">
-                  <p>Create new tag</p>
-                  <label className="switch">
+                  </div>
+                  <div>
+                    <label htmlFor="price">Price ($)</label>
+                    <br />
                     <input
-                      type="checkbox"
-                      id="isNewTag"
-                      name="isNewTag"
-                      onClick={handleClick2}
-                      checked={isNewTag}
-                      onChange={(e) => setIsNewTag(e.target.checked)}
+                      placeholder="0.00"
+                      type="text"
+                      id="price"
+                      name="price"
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
                     />
-                    <span className="slider round"></span>
-                  </label>
+                  </div>
                 </div>
-                <div>{tagInput}</div>
               </div>
-            </div>
 
-            <div>
-              <div className="">
-                <p className="card--title">Payment date</p>
-              </div>
               <div>
                 <div>
-                  <label htmlFor="date">Select the payment date</label>
-                  <br />
-                  <input
-                    type="text"
-                    id="date"
-                    placeholder="yyyy-mm-dd"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                  />
+                  <p className="card--title">Company</p>
+                </div>
+                <div>
+                  <div className="card--switch-wrapper">
+                    <p>Create new company</p>
+                    <label className="switch">
+                      <input
+                        type="checkbox"
+                        id="isNewContact"
+                        name="isNewContact"
+                        onClick={handleClick}
+                        checked={isNewCompany}
+                        onChange={(e) => setIsNewCompany(e.target.checked)}
+                      />
+                      <span className="slider round"></span>
+                    </label>
+                  </div>
+                  <div>{companyInput}</div>
                 </div>
               </div>
-            </div>
-          </form>
-        </div>
 
-        <div className="card">
-          <div>
-            <p className="card--title">Checkout</p>
-            <hr />
-            <br />
-            <p style={titleValidator}>
-              <b>Title:</b> <br />
-              {title}
-            </p>
-            <br />
-            <p style={priceValidator}>
-              <b>Price:</b>
-              <br /> $ {price.replace(",", ".")}
-            </p>
-            <br />
-            <p style={companyValidator}>
-              <b>Company:</b> <br />
-              {company}
-            </p>
-            <br />
-            <p style={tagValidator}>
-              <b>Tags:</b> <br />
-              {tag}
-            </p>
-            <br />
-            <p style={dateValidator}>
-              <b>Date:</b> <br /> {date.toString().replace(/-/g, "/")}
-            </p>
+              <div>
+                <div>
+                  <p className="card--title">Tags</p>
+                </div>
+                <div>
+                  <div className="card--switch-wrapper">
+                    <p>Create new tag</p>
+                    <label className="switch">
+                      <input
+                        type="checkbox"
+                        id="isNewTag"
+                        name="isNewTag"
+                        onClick={handleClick2}
+                        checked={isNewTag}
+                        onChange={(e) => setIsNewTag(e.target.checked)}
+                      />
+                      <span className="slider round"></span>
+                    </label>
+                  </div>
+                  <div>{tagInput}</div>
+                </div>
+              </div>
+
+              <div>
+                <div className="">
+                  <p className="card--title">Payment date</p>
+                </div>
+                <div>
+                  <div>
+                    <label htmlFor="date">Select the payment date</label>
+                    <br />
+                    <input
+                      type="text"
+                      id="date"
+                      placeholder="yyyy-mm-dd"
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+            </form>
           </div>
-          <button
-            type="submit"
-            form={formId}
-            disabled={isDone}
-            className="btn btn__solid btn__full"
-          >
-            Register new bill
-          </button>
+
+          <div className="card">
+            <div>
+              <p className="card--title">Checkout</p>
+              <hr />
+              <br />
+              <p style={titleValidator}>
+                <b>Title:</b> <br />
+                {title}
+              </p>
+              <br />
+              <p style={priceValidator}>
+                <b>Price:</b>
+                <br /> $ {price.replace(",", ".")}
+              </p>
+              <br />
+              <p style={companyValidator}>
+                <b>Company:</b> <br />
+                {company}
+              </p>
+              <br />
+              <p style={tagValidator}>
+                <b>Tags:</b> <br />
+                {tag}
+              </p>
+              <br />
+              <p style={dateValidator}>
+                <b>Date:</b> <br /> {date.toString().replace(/-/g, "/")}
+              </p>
+            </div>
+            <button
+              type="submit"
+              form={formId}
+              disabled={isDone}
+              className="btn btn__solid btn__full"
+            >
+              Register new bill
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-    <div id="myModal" className="modal" style={modalStyle}>
-    
 
-      <div className="modal-content">
-        <span onClick={(e) => closeModal(e)} className="close">&times;</span>
-        <p>{message.text}</p>
-        <br/>
-        <button
-            className="btn btn__solid"
-            onClick={(e) => closeModal(e)}
-          >
+      <div id="myModal" className="modal" style={modalStyle}>
+        <div className="modal-content">
+          <span onClick={(e) => closeModal(e)} className="close">
+            &times;
+          </span>
+          <p>{message.text}</p>
+          <br />
+          <button className="btn btn__solid" onClick={(e) => closeModal(e)}>
             Return
           </button>
+        </div>
       </div>
-    
-    </div>
+
     </>
   );
 }
