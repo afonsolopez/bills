@@ -23,6 +23,7 @@ func GetAllBills(w http.ResponseWriter, r *http.Request) {
 		r := models.JsonBill{
 			Company: b.Company.Name,
 			Price:   b.Price,
+			Tag:     b.Tag.Name,
 			Year:    b.Date.TimeStamp.Year(),
 			Month:   int(b.Date.TimeStamp.Month()),
 			Day:     b.Date.TimeStamp.Day(),

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/afonsolopez/bills/controllers/functions"
 	"github.com/afonsolopez/bills/models"
 	"github.com/afonsolopez/bills/setup"
 )
@@ -13,14 +14,11 @@ var bills []models.Bill
 
 // GetLastMonthBills ...
 func GetLastMonthBills(w http.ResponseWriter, r *http.Request) {
-
-	// // Gets the actual timestamp
+	// Get today's date
 	now := time.Now()
-	currentYear, currentMonth, _ := now.Date()
-	// Gets the actual location
-	currentLocation := now.Location()
-	// Finds the first day of the actual month
-	firstOfMonth := time.Date(currentYear, currentMonth, 1, 0, 0, 0, 0, currentLocation)
+	// Get the first day of the current month date
+	monthWorker := functions.MonthWorker{Month: functions.Month{Day: now, Gap: 1}}
+	firstOfMonth := monthWorker.FirstOfMonth()
 	// Query between the range of entire months choosed
 	setup.DB.Joins("Company").Joins("Tag").Joins("Date").Where("Date__time_stamp BETWEEN ? AND ?", firstOfMonth, now).Order("Date__time_stamp desc").Find(&bills)
 	// Variable to store slice of processed bills
