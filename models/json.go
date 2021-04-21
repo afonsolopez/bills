@@ -5,7 +5,7 @@ import (
 	"math"
 	"time"
 
-	"github.com/afonsolopez/bills/controllers/functions"
+	"github.com/afonsolopez/bills/functions"
 )
 
 type JsonBill struct {

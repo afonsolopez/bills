@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/afonsolopez/bills/controllers/functions"
+	"github.com/afonsolopez/bills/functions"
 	"github.com/afonsolopez/bills/models"
 	"github.com/afonsolopez/bills/setup"
 )
