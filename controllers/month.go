@@ -10,10 +10,10 @@ import (
 	"github.com/afonsolopez/bills/setup"
 )
 
-var bills []models.Bill
+// var bills []models.Bill
 
 // GetLastMonthBills ...
-func GetLastMonthBills(w http.ResponseWriter, r *http.Request) {
+func GetMonthBills(w http.ResponseWriter, r *http.Request) {
 	// Get today's date
 	now := time.Now()
 	// Get the first day of the current month date
@@ -26,6 +26,8 @@ func GetLastMonthBills(w http.ResponseWriter, r *http.Request) {
 	// Process each bill and inject it to "getBills"
 	for _, b := range bills {
 		r := models.JsonBill{
+			ID:      b.ID,
+			Title:   b.Title,
 			Company: b.Company.Name,
 			Price:   b.Price,
 			Tag:     b.Tag.Name,

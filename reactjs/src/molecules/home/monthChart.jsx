@@ -23,7 +23,7 @@ console.log(props.bills);
           <Line
             type="monotone"
             dataKey="price"
-            stroke="var(--highlight)"
+            stroke="var(--variable)"
             strokeWidth={3}
           />
           <Line dataKey="company" />

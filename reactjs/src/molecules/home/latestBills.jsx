@@ -39,7 +39,7 @@ function LatestBills(props) {
         </thead>
         <tbody>{rows}</tbody>
       </table>
-      <ButtonText title="See more" path="/details" />
+      <ButtonText title="See more" path="/month" />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Sidebar from "./molecules/sidebar";
 import BillForm from "./templates/billForm";
+import MonthTrack from "./templates/monthTrack";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -15,6 +16,9 @@ ReactDOM.render(
         <Sidebar />
 
         <Switch>
+        <Route path="/month">
+            <MonthTrack />
+          </Route>
           <Route path="/new">
             <BillForm />
           </Route>

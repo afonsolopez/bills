@@ -24,6 +24,12 @@
   grid-template-rows: 1fr;
   gap: 16px 16px;
 }
+.grid-container--box--top__2 {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr;
+  gap: 16px 16px;
+}
 .grid-container--box--bottom {
   display: grid;
   grid-template-columns: 1fr;
@@ -133,7 +139,7 @@
 }
 
 .btn__solid {
-  color: var(--selection);
+  color: white;
   padding: 8px 16px;
   background-color: var(--highlight);
 }
@@ -159,7 +165,7 @@
   flex-direction: column
 }
 .btn__add {
-  background: var(--background);
+  background: white;
   border-radius: 128px;
   padding: 12px 32px;
   border: none;
@@ -210,4 +216,23 @@
   width: 10ch;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.size16 > p {
+  white-space: nowrap;
+  width: 16ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tableWrapper {
+  max-height: 198px;
+  overflow-y: scroll;
+}
+
+.deleteBucket:hover {
+  cursor: pointer;
+}
+
+.deleteBucket:hover path {
+  fill: #EB4646;
 }

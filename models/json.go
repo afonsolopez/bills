@@ -9,6 +9,8 @@ import (
 )
 
 type JsonBill struct {
+	ID      uint    `json:"id"`
+	Title   string  `json:"title"`
 	Company string  `json:"company"`
 	Price   float64 `json:"price"`
 	Tag     string  `json:"tag"`

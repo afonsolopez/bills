@@ -47,6 +47,12 @@ func main() {
 	// Handle to GetLastMonthBills func on /hello path
 	http.HandleFunc("/last", controllers.GetLastMonthBills)
 
+	// Handle to GetMonthBills func on /getMonthBills path
+	http.HandleFunc("/getMonthBills", controllers.GetMonthBills)
+
+	// Handle to GetMonthBillsByTag func on /getMonthBillsByTag path
+	http.HandleFunc("/getMonthBillsByTag", controllers.GetMonthBillsByTag)
+
 	// Handle to GetAllCompanies func on /getAllCompanies path
 	http.HandleFunc("/getAllCompanies", controllers.GetAllCompanies)
 

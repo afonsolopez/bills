@@ -16,7 +16,7 @@
   --scrollbar-thumb-hover: color-mod(var(--button-hover) lightness(-10%));
   --form-placeholder: #949494;
   --form-text: #000;
-  --variable: #39a33c;
+  --variable: #3F1F66;
   --highlight: #14662B;
   --select-arrow: svg-load('./assets/select-arrow.svg', fill: #161f27);
 }
