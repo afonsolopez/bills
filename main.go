@@ -1,21 +1,21 @@
 package main
 
 import (
+	"database/sql"
 	"embed"
 	"fmt"
 	"io/fs"
+	"log"
 	"net/http"
 	"path"
 	"strings"
 
 	"github.com/afonsolopez/bills/controllers"
-	"github.com/afonsolopez/bills/models"
 	"github.com/afonsolopez/bills/setup"
 
+	_ "github.com/mattn/go-sqlite3"
+
 	"github.com/webview/webview"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 var err error
@@ -25,42 +25,22 @@ var f embed.FS
 
 func main() {
 
-	setup.DB, err = gorm.Open(sqlite.Open("test.db"), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
+	// Databse connection
+	var err error
+	setup.DB, err = sql.Open("sqlite3",
+		"./test.db")
 	if err != nil {
-		panic("failed to connect database")
+		log.Fatal(err)
 	}
-
-	// Migrate the schema
-	setup.DB.AutoMigrate(&models.Bill{}, models.Company{}, models.Date{}, models.Tag{})
 
 	// Handle to ./reactjs/build folder on root path
 	http.HandleFunc("/", rootHandler)
 
-	// Handle to showMessage func on /hello path
-	http.HandleFunc("/hello", controllers.ShowMessage)
+	http.HandleFunc("/big-numbers", controllers.GetBigNumbers)
 
-	// Handle to GetAllBills func on /hello path
-	http.HandleFunc("/all", controllers.GetAllBills)
+	http.HandleFunc("/latest", controllers.GetLatestBills)
 
-	// Handle to GetLastMonthBills func on /hello path
-	http.HandleFunc("/last", controllers.GetLastMonthBills)
-
-	// Handle to GetMonthBills func on /getMonthBills path
-	http.HandleFunc("/getMonthBills", controllers.GetMonthBills)
-
-	// Handle to GetMonthBillsByTag func on /getMonthBillsByTag path
-	http.HandleFunc("/getMonthBillsByTag", controllers.GetMonthBillsByTag)
-
-	// Handle to GetAllCompanies func on /getAllCompanies path
-	http.HandleFunc("/getAllCompanies", controllers.GetAllCompanies)
-
-	// Handle to GetAllTags func on /getAllTags path
-	http.HandleFunc("/getAllTags", controllers.GetAllTags)
-
-	// Handle to CreateNewBill func on /hello path
-	http.HandleFunc("/createNewBill", controllers.CreateNewBill)
+	http.HandleFunc("/all-by-day", controllers.GetAllBillsByDay)
 
 	// Run server at port 8000 as goroutine
 	// for non-block working

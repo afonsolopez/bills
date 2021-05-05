@@ -1,6 +1,9 @@
 package setup
 
-import "gorm.io/gorm"
+import "database/sql"
 
-// DB gorm database reference
-var DB *gorm.DB
+var (
+	// DB is the connection handle
+	// for the database
+	DB *sql.DB
+)

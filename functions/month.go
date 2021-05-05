@@ -75,3 +75,15 @@ func (m *MonthWorker) LastOfLastOfMonth() time.Time {
 	return firstOfLastOfMonth.AddDate(0, int(math.Abs(float64(m.Month.Gap))), -1)
 
 }
+
+func (m *MonthWorker) RemainingDays() int {
+	// Define current year, month and location
+	year, month, location := m.Month.Current()
+
+	firstOfMonth := time.Date(year, month, 1, 0, 0, 0, 0, location)
+
+	lastOfMonth := firstOfMonth.AddDate(0, 1, -1)
+	// Gets the difference between two dates
+	diff := lastOfMonth.Sub(m.Month.Day)
+	return int(diff.Hours() / 24) // number of days
+}

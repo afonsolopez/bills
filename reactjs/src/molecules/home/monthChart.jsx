@@ -22,13 +22,12 @@ console.log(props.bills);
         >
           <Line
             type="monotone"
-            dataKey="price"
+            dataKey="total"
             stroke="var(--variable)"
             strokeWidth={3}
           />
-          <Line dataKey="company" />
           <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-          <XAxis dataKey="day" />
+          <XAxis dataKey="time_stamp" />
           <YAxis />
           <Tooltip />
         </LineChart>

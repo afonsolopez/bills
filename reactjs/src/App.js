@@ -12,15 +12,27 @@ import MonthChart from "./molecules/home/monthChart";
 function App() {
   // Define storage for data
   const [state, setState] = useState({
-    bills: [{ company: "", price: 0.0, year: 0, month: 0, day: 0 }],
+    time_stamp: "",
     total: 0.0,
-    remainingDays: 0,
   });
+  const [entries, setEntries] = useState([
+    {
+      company: "placeholder",
+      price: 0.0,
+    },
+  ]);
+  const [bigNumbers, setBigNumbers] = useState([
+    {
+      total: 0.0,
+      remainingDays: 0,
+    },
+  ]);
 
+  // Fetch data for the month graph
   useEffect(() => {
     let mounted = true;
 
-    fetch(`${process.env.REACT_APP_API_PATH || ""}/last`, {
+    fetch(`${process.env.REACT_APP_API_PATH || ""}/all-by-day`, {
       // mode: 'no-cors',
       method: "GET",
       headers: {
@@ -32,7 +44,63 @@ function App() {
           response.json().then((json) => {
             if (json !== null) {
               setState(json);
-              }
+            }
+            console.log(json);
+          });
+        }
+      }
+    });
+
+    return function cleanup() {
+      mounted = false;
+    };
+  }, []);
+
+  // Fetch latest bills entries
+  useEffect(() => {
+    let mounted = true;
+
+    fetch(`${process.env.REACT_APP_API_PATH || ""}/latest`, {
+      // mode: 'no-cors',
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    }).then((response) => {
+      if (mounted) {
+        if (response.ok) {
+          response.json().then((json) => {
+            if (json !== null) {
+              setEntries(json);
+            }
+            console.log(json);
+          });
+        }
+      }
+    });
+
+    return function cleanup() {
+      mounted = false;
+    };
+  }, []);
+
+  // Fetch big numbers data
+  useEffect(() => {
+    let mounted = true;
+
+    fetch(`${process.env.REACT_APP_API_PATH || ""}/big-numbers`, {
+      // mode: 'no-cors',
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    }).then((response) => {
+      if (mounted) {
+        if (response.ok) {
+          response.json().then((json) => {
+            if (json !== null) {
+              setBigNumbers(json);
+            }
             console.log(json);
           });
         }
@@ -48,14 +116,14 @@ function App() {
     <div className="grid-container--box">
       <div className="grid-container--box--top">
         <NewBill />
-        <LatestBills bills={state.bills} />
+        <LatestBills bills={entries} />
         <div className="grid-container--box--top--double">
-          <TotalSpent total={state.total} />
-          <RemainingDays days={state.remainingDays} />
+          <TotalSpent total={bigNumbers[0].total} />
+          <RemainingDays days={bigNumbers[0].remainingDays} />
         </div>
       </div>
       <div className="grid-container--box--bottom">
-        <MonthChart bills={state.bills} />
+        <MonthChart bills={state} />
       </div>
     </div>
   );
