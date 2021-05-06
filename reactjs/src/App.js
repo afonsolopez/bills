@@ -17,7 +17,7 @@ function App() {
   });
   const [entries, setEntries] = useState([
     {
-      company: "placeholder",
+      company: "",
       price: 0.0,
     },
   ]);
@@ -32,7 +32,7 @@ function App() {
   useEffect(() => {
     let mounted = true;
 
-    fetch(`${process.env.REACT_APP_API_PATH || ""}/all-by-day`, {
+    fetch(`${process.env.REACT_APP_API_PATH || ""}/by-day`, {
       // mode: 'no-cors',
       method: "GET",
       headers: {

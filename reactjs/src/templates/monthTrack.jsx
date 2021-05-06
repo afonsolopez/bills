@@ -3,16 +3,31 @@ import React, { useState, useEffect } from "react";
 
 import ".././App.css";
 import TotalSpent from "../molecules/home/totalSpent";
-import MonthFilters from "../molecules/month/monthFilters";
+import RemainingDays from "../molecules/home/remainingDays";
 import MonthChart from "../molecules/month/monthChart";
 
 function MonthTrack() {
   // Define storage for data
+  const [bigNumbers, setBigNumbers] = useState([
+    {
+      total: 0.0,
+      remainingDays: 0,
+    },
+  ]);
   const [state, setState] = useState({
-    bills: [{ company: "", tag: "", price: 0.0, year: 0, month: 0, day: 0 }],
+    time_stamp: "",
     total: 0.0,
-    remainingDays: 0,
   });
+  const [entries, setEntries] = useState([
+    {
+      id: 0,
+      title: "",
+      company: "",
+      price: 0.0,
+      tag: "",
+      time_stamp: "",
+    },
+  ]);
   // Handle when to show or not the modal
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -29,7 +44,7 @@ function MonthTrack() {
   // Close and reset form button handler
   const openModal = (e, id) => {
     e.preventDefault();
-    console.log(id);  
+    console.log(id);
     setModalOpen(true);
   };
 
@@ -39,10 +54,39 @@ function MonthTrack() {
     setModalOpen(false);
   };
 
+    // Fetch data for the month graph
+    useEffect(() => {
+      let mounted = true;
+  
+      fetch(`${process.env.REACT_APP_API_PATH || ""}/by-tag`, {
+        // mode: 'no-cors',
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }).then((response) => {
+        if (mounted) {
+          if (response.ok) {
+            response.json().then((json) => {
+              if (json !== null) {
+                setState(json);
+              }
+              console.log(json);
+            });
+          }
+        }
+      });
+  
+      return function cleanup() {
+        mounted = false;
+      };
+    }, []);
+
+  // Fetch big numbers data
   useEffect(() => {
     let mounted = true;
 
-    fetch(`${process.env.REACT_APP_API_PATH || ""}/getMonthBills`, {
+    fetch(`${process.env.REACT_APP_API_PATH || ""}/big-numbers`, {
       // mode: 'no-cors',
       method: "GET",
       headers: {
@@ -53,7 +97,34 @@ function MonthTrack() {
         if (response.ok) {
           response.json().then((json) => {
             if (json !== null) {
-              setState(json);
+              setBigNumbers(json);
+            }
+            console.log(json);
+          });
+        }
+      }
+    });
+
+    return function cleanup() {
+      mounted = false;
+    };
+  }, []);
+
+  // Fetch entries data
+  useEffect(() => {
+    let mounted = true;
+    fetch(`${process.env.REACT_APP_API_PATH || ""}/month`, {
+      // mode: 'no-cors',
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    }).then((response) => {
+      if (mounted) {
+        if (response.ok) {
+          response.json().then((json) => {
+            if (json !== null) {
+              setEntries(json);
             }
             console.log(json);
           });
@@ -67,8 +138,8 @@ function MonthTrack() {
   }, []);
 
   let rows;
-  if (state.bills) {
-    let billsList = state.bills;
+  if (entries) {
+    let billsList = entries;
     let billsTable = billsList.map((b, index) => (
       <tr key={index}>
         <td className="rowTitle">
@@ -83,7 +154,7 @@ function MonthTrack() {
         <td className="rowTitle">
           <p>{b.tag}</p>
         </td>
-        <td className="rowTitle">
+        <td className="rowTitle rowDel">
           <svg
             className="deleteBucket"
             onClick={(e) => openModal(e, b.id)}
@@ -117,12 +188,10 @@ function MonthTrack() {
     <>
       <div className="grid-container--box">
         <div className="grid-container--box--top__2">
-          <div>
-            <MonthChart bills={state.bills} />
-          </div>
+            <MonthChart bills={state} />
           <div className="grid-container--box--top--double">
-            <MonthFilters />
-            <TotalSpent total={state.total} />
+          <TotalSpent total={bigNumbers[0].total} />
+          <RemainingDays days={bigNumbers[0].remainingDays} />
           </div>
         </div>
         <div className="grid-container--box--bottom">
@@ -137,7 +206,7 @@ function MonthTrack() {
                     <th className="rowHeader">Title</th>
                     <th className="rowHeader">Price ($)</th>
                     <th className="rowHeader">Tag</th>
-                    <th className="rowHeader">Delete</th>
+                    <th className="rowHeader rowDel">Delete</th>
                   </tr>
                 </thead>
                 <tbody>{rows}</tbody>

@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"math"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/afonsolopez/bills/functions"
@@ -13,14 +13,15 @@ import (
 	"github.com/afonsolopez/bills/setup"
 )
 
-func GetMonthBillsByDay(w http.ResponseWriter, r *http.Request) {
+func GetMonthBillsByTag(w http.ResponseWriter, r *http.Request) {
 
-	var res []models.ByDay
+	var res []models.ByTag
 
 	// Declare all the expected results variables in order
 	var (
-		timeStamp time.Time
+		tag       string
 		total     float64
+		timeStamp time.Time
 	)
 
 	// Get today's date
@@ -29,21 +30,23 @@ func GetMonthBillsByDay(w http.ResponseWriter, r *http.Request) {
 	monthWorker := functions.MonthWorker{Month: functions.Month{Day: now, Gap: 1}}
 	firstOfMonth := monthWorker.FirstOfMonth()
 
-	// Prepare a query on database with two datetime arguments
+	// Make a query on database
 	stmt, err := setup.DB.Prepare(`
-		SELECT d2.time_stamp AS time_stamp, SUM(b2.price) AS total
+		SELECT t.name AS tag, SUM(b2.price) AS total, d2.time_stamp 
 		FROM bills b2 
+		LEFT JOIN tags t
+		ON b2.tag_id = t.id
 		LEFT JOIN dates d2 
-		ON b2.date_id = d2.id
+		ON b2.date_id = d2.id 
 		WHERE d2.time_stamp
 		BETWEEN ? AND ?
-		GROUP BY time_stamp;
+		GROUP BY t.name;
 	`)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Closes the stmt variable section (good practice)
+	// Closes the rows variable section (good practice)
 	defer stmt.Close()
 
 	// Query on database using the stmt SQL and passing two datetime into strings to it
@@ -57,15 +60,16 @@ func GetMonthBillsByDay(w http.ResponseWriter, r *http.Request) {
 
 	// Loops over the query results
 	for rows.Next() {
-		err := rows.Scan(&timeStamp, &total)
+		err := rows.Scan(&tag, &total, &timeStamp)
 		if err != nil {
+			fmt.Println("caiu na toca do rato")
 			log.Fatal(err)
 		}
-		log.Println(timeStamp, total)
+		log.Println(tag, total)
 		// Generate a single Bill struct
-		item := models.ByDay{
-			TimeStamp: strconv.Itoa(timeStamp.Day()),
-			Total:     math.Ceil(total*100) / 100,
+		item := models.ByTag{
+			Tag:   tag,
+			Total: math.Ceil(total*100) / 100,
 		}
 		// Append this Bill struct to the response slice
 		res = append(res, item)

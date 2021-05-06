@@ -40,7 +40,11 @@ func main() {
 
 	http.HandleFunc("/latest", controllers.GetLatestBills)
 
-	http.HandleFunc("/all-by-day", controllers.GetAllBillsByDay)
+	http.HandleFunc("/by-day", controllers.GetMonthBillsByDay)
+
+	http.HandleFunc("/by-tag", controllers.GetMonthBillsByTag)
+
+	http.HandleFunc("/month", controllers.GetThisMonthBills)
 
 	// Run server at port 8000 as goroutine
 	// for non-block working

@@ -3,9 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"log"
-	"math"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/afonsolopez/bills/functions"
@@ -13,14 +11,18 @@ import (
 	"github.com/afonsolopez/bills/setup"
 )
 
-func GetMonthBillsByDay(w http.ResponseWriter, r *http.Request) {
+func GetThisMonthBills(w http.ResponseWriter, r *http.Request) {
 
-	var res []models.ByDay
+	var res []models.Bill
 
 	// Declare all the expected results variables in order
 	var (
-		timeStamp time.Time
-		total     float64
+		id         int
+		title      string
+		price      float64
+		company    string
+		tag        string
+		time_stamp time.Time
 	)
 
 	// Get today's date
@@ -29,21 +31,25 @@ func GetMonthBillsByDay(w http.ResponseWriter, r *http.Request) {
 	monthWorker := functions.MonthWorker{Month: functions.Month{Day: now, Gap: 1}}
 	firstOfMonth := monthWorker.FirstOfMonth()
 
-	// Prepare a query on database with two datetime arguments
+	// Make a query on database
 	stmt, err := setup.DB.Prepare(`
-		SELECT d2.time_stamp AS time_stamp, SUM(b2.price) AS total
+		SELECT b2.id, b2.title, b2.price, c2.name AS company, t.name AS tag, d2.time_stamp 
 		FROM bills b2 
+		LEFT JOIN companies c2 
+		ON b2.company_id = c2.id
+		LEFT JOIN tags t
+		ON b2.tag_id = t.id 
 		LEFT JOIN dates d2 
-		ON b2.date_id = d2.id
+		ON b2.date_id = d2.id 
 		WHERE d2.time_stamp
 		BETWEEN ? AND ?
-		GROUP BY time_stamp;
+		ORDER BY d2.time_stamp DESC
 	`)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Closes the stmt variable section (good practice)
+	// Closes the rows variable section (good practice)
 	defer stmt.Close()
 
 	// Query on database using the stmt SQL and passing two datetime into strings to it
@@ -57,15 +63,19 @@ func GetMonthBillsByDay(w http.ResponseWriter, r *http.Request) {
 
 	// Loops over the query results
 	for rows.Next() {
-		err := rows.Scan(&timeStamp, &total)
+		err := rows.Scan(&id, &title, &price, &company, &tag, &time_stamp)
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Println(timeStamp, total)
+		log.Println(id, title, price, company, tag, time_stamp)
 		// Generate a single Bill struct
-		item := models.ByDay{
-			TimeStamp: strconv.Itoa(timeStamp.Day()),
-			Total:     math.Ceil(total*100) / 100,
+		item := models.Bill{
+			Id:        id,
+			Title:     title,
+			Price:     price,
+			Company:   company,
+			Tag:       tag,
+			TimeStamp: time_stamp,
 		}
 		// Append this Bill struct to the response slice
 		res = append(res, item)
