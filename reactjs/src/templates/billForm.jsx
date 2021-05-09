@@ -101,6 +101,7 @@ function BillForm() {
         console.log(response);
         setMessage({ status: 201, text: "Bill registerd with success." });
         setModalOpen(true);
+        setIsDone(true)
       })
       // Submit form error catch response
       .catch(function (error) {
