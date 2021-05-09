@@ -36,6 +36,10 @@ func main() {
 	// Handle to ./reactjs/build folder on root path
 	http.HandleFunc("/", rootHandler)
 
+	http.HandleFunc("/companies", controllers.GetAllCompanies)
+
+	http.HandleFunc("/tags", controllers.GetAllTags)
+
 	http.HandleFunc("/big-numbers", controllers.GetBigNumbers)
 
 	http.HandleFunc("/latest", controllers.GetLatestBills)
@@ -45,6 +49,8 @@ func main() {
 	http.HandleFunc("/by-tag", controllers.GetMonthBillsByTag)
 
 	http.HandleFunc("/month", controllers.GetThisMonthBills)
+
+	http.HandleFunc("/create", controllers.CreateNewBill)
 
 	// Run server at port 8000 as goroutine
 	// for non-block working

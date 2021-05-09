@@ -80,7 +80,7 @@ function BillForm() {
   const handleSubmit = (evt) => {
     evt.preventDefault();
 
-    fetch(`${process.env.REACT_APP_API_PATH || ""}/createNewBill`, {
+    fetch(`${process.env.REACT_APP_API_PATH || ""}/create`, {
       method: "post",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -116,7 +116,7 @@ function BillForm() {
   useEffect(() => {
     let mounted = true;
 
-    fetch(`${process.env.REACT_APP_API_PATH || ""}/getAllCompanies`, {
+    fetch(`${process.env.REACT_APP_API_PATH || ""}/companies`, {
       // mode: 'no-cors',
       method: "GET",
       headers: {
@@ -144,7 +144,7 @@ function BillForm() {
   useEffect(() => {
     let mounted = true;
 
-    fetch(`${process.env.REACT_APP_API_PATH || ""}/getAllTags`, {
+    fetch(`${process.env.REACT_APP_API_PATH || ""}/tags`, {
       // mode: 'no-cors',
       method: "GET",
       headers: {
@@ -205,7 +205,7 @@ function BillForm() {
                 Please Choose...
               </option>
               {companies.map((c) => (
-                <option key={c.value} value={c.value}>
+                <option key={c.value} value={c.label}>
                   {c.label}
                 </option>
               ))}
@@ -245,7 +245,7 @@ function BillForm() {
                 Please Choose...
               </option>
               {tags.map((t) => (
-                <option key={t.value} value={t.value}>
+                <option key={t.value} value={t.label}>
                   {t.label}
                 </option>
               ))}
