@@ -31,6 +31,11 @@ function MonthTrack() {
   // Handle when to show or not the modal
   const [modalOpen, setModalOpen] = useState(false);
 
+  const [message, setMessage] = useState({
+    msg: "xxx",
+    bill_id: 0,
+  });
+
   // Change the display mode of the modal based on it state
   const checkModal = (modalOpen) => {
     if (modalOpen) {
@@ -46,6 +51,38 @@ function MonthTrack() {
     e.preventDefault();
     console.log(id);
     setModalOpen(true);
+
+    fetch(`${process.env.REACT_APP_API_PATH || ""}/delete`, {
+      method: "delete",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: JSON.stringify({
+        id: id,
+      }),
+    })
+      // Submit form response if 201 status
+      .then((response) => {
+        console.log("bill data sent");
+        if (response.ok) {
+          response.json().then((json) => {
+            if (json !== null) {
+              setMessage({ msg: json.msg, id: json.id });
+            }
+            console.log(json);
+          });
+        }
+
+        setModalOpen(true);
+      })
+      // Submit form error catch response
+      .catch(function (error) {
+        console.log(error);
+        setMessage({
+          status: 500,
+          text: "Bill cannot be registered, please, try again later.",
+        });
+      });
   };
 
   // Close and reset form button handler
@@ -54,33 +91,33 @@ function MonthTrack() {
     setModalOpen(false);
   };
 
-    // Fetch data for the month graph
-    useEffect(() => {
-      let mounted = true;
-  
-      fetch(`${process.env.REACT_APP_API_PATH || ""}/by-tag`, {
-        // mode: 'no-cors',
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-        },
-      }).then((response) => {
-        if (mounted) {
-          if (response.ok) {
-            response.json().then((json) => {
-              if (json !== null) {
-                setState(json);
-              }
-              console.log(json);
-            });
-          }
+  // Fetch data for the month graph
+  useEffect(() => {
+    let mounted = true;
+
+    fetch(`${process.env.REACT_APP_API_PATH || ""}/by-tag`, {
+      // mode: 'no-cors',
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    }).then((response) => {
+      if (mounted) {
+        if (response.ok) {
+          response.json().then((json) => {
+            if (json !== null) {
+              setState(json);
+            }
+            console.log(json);
+          });
         }
-      });
-  
-      return function cleanup() {
-        mounted = false;
-      };
-    }, []);
+      }
+    });
+
+    return function cleanup() {
+      mounted = false;
+    };
+  }, [message]);
 
   // Fetch big numbers data
   useEffect(() => {
@@ -108,7 +145,7 @@ function MonthTrack() {
     return function cleanup() {
       mounted = false;
     };
-  }, []);
+  }, [message]);
 
   // Fetch entries data
   useEffect(() => {
@@ -135,7 +172,7 @@ function MonthTrack() {
     return function cleanup() {
       mounted = false;
     };
-  }, []);
+  }, [message]);
 
   let rows;
   if (entries) {
@@ -188,10 +225,10 @@ function MonthTrack() {
     <>
       <div className="grid-container--box">
         <div className="grid-container--box--top__2">
-            <MonthChart bills={state} />
+          <MonthChart bills={state} />
           <div className="grid-container--box--top--double">
-          <TotalSpent total={bigNumbers[0].total} />
-          <RemainingDays days={bigNumbers[0].remainingDays} />
+            <TotalSpent total={bigNumbers[0].total} />
+            <RemainingDays days={bigNumbers[0].remainingDays} />
           </div>
         </div>
         <div className="grid-container--box--bottom">
@@ -221,7 +258,7 @@ function MonthTrack() {
           <span onClick={(e) => closeModal(e)} className="close">
             &times;
           </span>
-          <p>Modal working!</p>
+          <p>{message.msg}</p>
           <br />
           <button className="btn btn__solid" onClick={(e) => closeModal(e)}>
             Return

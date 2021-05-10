@@ -51,9 +51,8 @@ func GetThisMonthBills(w http.ResponseWriter, r *http.Request) {
 
 	// Closes the rows variable section (good practice)
 	defer stmt.Close()
-
 	// Query on database using the stmt SQL and passing two datetime into strings to it
-	rows, err := stmt.Query(firstOfMonth.String(), now.String())
+	rows, err := stmt.Query(firstOfMonth.String()[0:10], now.String()[0:10])
 	if err != nil {
 		log.Fatal(err)
 	}

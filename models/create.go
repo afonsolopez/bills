@@ -18,11 +18,16 @@ type Dates struct {
 }
 
 type Bills struct {
+	ID        uint    `json:"id"`
 	Title     string  `json:"title"`
 	Price     float64 `json:"price"`
 	CompanyID uint    `json:"company_id"`
 	TagID     uint    `json:"tag_id"`
 	DateID    uint    `json:"date_id"`
+}
+
+type BillID struct {
+	ID uint `json:"id"`
 }
 
 type Res struct {

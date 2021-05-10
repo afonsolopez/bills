@@ -52,6 +52,8 @@ func main() {
 
 	http.HandleFunc("/create", controllers.CreateNewBill)
 
+	http.HandleFunc("/delete", controllers.DeleteBill)
+
 	// Run server at port 8000 as goroutine
 	// for non-block working
 	go http.ListenAndServe(":8000", nil)
