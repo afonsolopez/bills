@@ -25,4 +25,4 @@ yarn-error.log*
 
 /.vscode
 
-test.db
+data.db

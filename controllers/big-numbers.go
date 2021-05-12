@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -51,9 +52,17 @@ func GetBigNumbers(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		err := rows.Scan(&total)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println("Total scan equal to:", total) // TEMP FIX - PASS ERR
+			// log.Fatal(err)
 		}
+
+		// TEMP FIX - NEEDS IMPROVEMENT
+		if total == 0 {
+			total = 0.0
+		}
+
 		// log.Println(remainingDays, total)
+
 		// Generate a single Bill struct
 		item := models.BigNumbers{
 			RemainingDays: monthWorker.RemainingDays(),

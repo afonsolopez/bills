@@ -15,17 +15,17 @@ function MonthTrack() {
     },
   ]);
   const [state, setState] = useState({
-    tag: "",
+    tag: "None",
     total: 0.0,
   });
   const [entries, setEntries] = useState([
     {
       id: 0,
-      title: "",
-      company: "",
+      title: "None",
+      company: "None",
       price: 0.0,
-      tag: "",
-      time_stamp: "",
+      tag: "None",
+      time_stamp: "None",
     },
   ]);
   // Handle when to show or not the modal
@@ -39,6 +39,8 @@ function MonthTrack() {
     {month: ""}
   ])
   const [currentMonth, setCurrentMonth] = useState("")
+
+  const [delCounter, setDelCounter] = useState(0)
 
   // Change the display mode of the modal based on it state
   const checkModal = (modalOpen) => {
@@ -72,6 +74,7 @@ function MonthTrack() {
           response.json().then((json) => {
             if (json !== null) {
               setMessage({ msg: json.msg, id: json.id });
+              setDelCounter(delCounter + 1)
             }
             console.log(json);
           });
@@ -121,7 +124,7 @@ function MonthTrack() {
     return function cleanup() {
       mounted = false;
     };
-  }, [message]);
+  }, [delCounter]);
 
   // Fetch big numbers data
   useEffect(() => {
@@ -149,7 +152,7 @@ function MonthTrack() {
     return function cleanup() {
       mounted = false;
     };
-  }, [message]);
+  }, [delCounter]);
 
   // Fetch entries data
   useEffect(() => {
@@ -176,7 +179,7 @@ function MonthTrack() {
     return function cleanup() {
       mounted = false;
     };
-  }, [message]);
+  }, [delCounter]);
 
   // Fetch data for the month graph
   useEffect(() => {

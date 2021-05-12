@@ -12,12 +12,12 @@ import MonthChart from "./molecules/home/monthChart";
 function App() {
   // Define storage for data
   const [state, setState] = useState({
-    time_stamp: "",
+    time_stamp: "None",
     total: 0.0,
   });
   const [entries, setEntries] = useState([
     {
-      company: "",
+      company: "None",
       price: 0.0,
     },
   ]);

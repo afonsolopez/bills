@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"embed"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"net/http"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/afonsolopez/bills/controllers"
 	"github.com/afonsolopez/bills/setup"
@@ -26,12 +28,51 @@ var f embed.FS
 func main() {
 
 	// Databse connection
-	var err error
+	// var err error
 	setup.DB, err = sql.Open("sqlite3",
-		"./test.db")
+		"./data.db")
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	createDB := `
+	CREATE TABLE IF NOT EXISTS bills (id integer,
+		company_id integer,
+		title text,
+		price real,
+		date_id integer,
+		tag_id integer,
+		PRIMARY KEY (id),
+		CONSTRAINT fk_bills_date FOREIGN KEY (date_id) REFERENCES dates(id),
+		CONSTRAINT fk_bills_tag FOREIGN KEY (tag_id) REFERENCES tags(id),
+		CONSTRAINT fk_bills_company FOREIGN KEY (company_id) REFERENCES companies(id));
+		
+		CREATE TABLE IF NOT EXISTS companies (id integer,
+		name text,
+		PRIMARY KEY (id));
+		
+		CREATE TABLE IF NOT EXISTS dates (id integer,
+		time_stamp datetime,
+		PRIMARY KEY (id));
+		
+		CREATE TABLE IF NOT EXISTS tags (id integer,
+		name text,
+		PRIMARY KEY (id));
+	`
+
+	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancelfunc()
+
+	mount, err := setup.DB.ExecContext(ctx, createDB)
+	if err != nil {
+		log.Fatal(err)
+	}
+	rows, err := mount.RowsAffected()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("Rows affected when creating table: %d", rows)
 
 	// Handle to ./reactjs/build folder on root path
 	http.HandleFunc("/", rootHandler)
