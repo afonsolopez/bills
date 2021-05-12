@@ -13,7 +13,7 @@ function MonthChart(props) {
 console.log(props.bills);
   return (
     <div className="card">
-      <p className="card--title">Bills throught the month</p>
+      <p className="card--title">Bills throught the month - {props.monthName}</p>
       <br />
       <ResponsiveContainer width="100%" height="100%">
         <LineChart

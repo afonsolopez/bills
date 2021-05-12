@@ -14,10 +14,12 @@ function MonthTrack() {
       remainingDays: 0,
     },
   ]);
-  const [state, setState] = useState({
-    tag: "None",
-    total: 0.0,
-  });
+  const [state, setState] = useState([
+    {
+      tag: "None",
+      total: 0.0,
+    },
+  ]);
   const [entries, setEntries] = useState([
     {
       id: 0,
@@ -25,7 +27,7 @@ function MonthTrack() {
       company: "None",
       price: 0.0,
       tag: "None",
-      time_stamp: "None",
+      timeStamp: "0000-00-00",
     },
   ]);
   // Handle when to show or not the modal
@@ -35,12 +37,10 @@ function MonthTrack() {
     msg: "",
     bill_id: 0,
   });
-  const [month, setMonth] = useState([
-    {month: ""}
-  ])
-  const [currentMonth, setCurrentMonth] = useState("")
+  const [month, setMonth] = useState([{ month: "" }]);
+  const [currentMonth, setCurrentMonth] = useState("");
 
-  const [delCounter, setDelCounter] = useState(0)
+  const [delCounter, setDelCounter] = useState(0);
 
   // Change the display mode of the modal based on it state
   const checkModal = (modalOpen) => {
@@ -74,7 +74,28 @@ function MonthTrack() {
           response.json().then((json) => {
             if (json !== null) {
               setMessage({ msg: json.msg, id: json.id });
-              setDelCounter(delCounter + 1)
+              setDelCounter(delCounter + 1);
+              console.log(
+                `#### Número de itens na lista ${entries.length} ####`
+              );
+              if (entries.length <= 1) {
+                setEntries([
+                  {
+                    id: 0,
+                    title: "None",
+                    company: "None",
+                    price: 0.0,
+                    tag: "None",
+                    time_stamp: "None",
+                  },
+                ]);
+                setState([
+                  {
+                    tag: "None",
+                    total: 0.0,
+                  },
+                ]);
+              }
             }
             console.log(json);
           });
@@ -207,7 +228,7 @@ function MonthTrack() {
     return function cleanup() {
       mounted = false;
     };
-  }, []);
+  }, [delCounter]);
 
   const changeMonth = (e, date) => {
     e.preventDefault();
@@ -218,8 +239,8 @@ function MonthTrack() {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: JSON.stringify({
-        month: date.slice(5,7),
-        year: date.slice(0,4)
+        month: date.slice(5, 7),
+        year: date.slice(0, 4),
       }),
     })
       // Submit form response if 201 status
@@ -238,61 +259,58 @@ function MonthTrack() {
         console.log(error);
       });
 
-      fetch(`${process.env.REACT_APP_API_PATH || ""}/big-numbers`, {
-        method: "post",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: JSON.stringify({
-          month: date.slice(5,7),
-          year: date.slice(0,4)
-        }),
-      })
-        // Submit form response if 201 status
-        .then((response) => {
-          if (response.ok) {
-            response.json().then((json) => {
-              if (json !== null) {
-                setBigNumbers(json);
-              }
-              console.log(json);
-            });
-          }
-        })
-        // Submit form error catch response
-        .catch(function (error) {
-          console.log(error);
-        });
-
-        fetch(`${process.env.REACT_APP_API_PATH || ""}/by-tag`, {
-          method: "post",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: JSON.stringify({
-            month: date.slice(5,7),
-            year: date.slice(0,4)
-          }),
-        })
-          // Submit form response if 201 status
-          .then((response) => {
-            if (response.ok) {
-              response.json().then((json) => {
-                if (json !== null) {
-                  setState(json);
-                }
-                console.log(json);
-              });
+    fetch(`${process.env.REACT_APP_API_PATH || ""}/big-numbers`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: JSON.stringify({
+        month: date.slice(5, 7),
+        year: date.slice(0, 4),
+      }),
+    })
+      // Submit form response if 201 status
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((json) => {
+            if (json !== null) {
+              setBigNumbers(json);
             }
-          })
-          // Submit form error catch response
-          .catch(function (error) {
-            console.log(error);
+            console.log(json);
           });
+        }
+      })
+      // Submit form error catch response
+      .catch(function (error) {
+        console.log(error);
+      });
 
+    fetch(`${process.env.REACT_APP_API_PATH || ""}/by-tag`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: JSON.stringify({
+        month: date.slice(5, 7),
+        year: date.slice(0, 4),
+      }),
+    })
+      // Submit form response if 201 status
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((json) => {
+            if (json !== null) {
+              setState(json);
+            }
+            console.log(json);
+          });
+        }
+      })
+      // Submit form error catch response
+      .catch(function (error) {
+        console.log(error);
+      });
   };
-
-
 
   let rows;
   if (entries) {
@@ -309,7 +327,7 @@ function MonthTrack() {
           <p>{b.price.toFixed(2)}</p>
         </td>
         <td className="rowTitle">
-          <p>{b.tag}</p>
+          <p>{b.timeStamp.slice(8,10)}</p>
         </td>
         <td className="rowTitle rowDel">
           <svg
@@ -341,6 +359,7 @@ function MonthTrack() {
       </tr>
     );
   }
+
   return (
     <>
       <div className="grid-container--box">
@@ -355,15 +374,16 @@ function MonthTrack() {
                 <select
                   name="month"
                   value={currentMonth || "DEFAULT"}
-                  onChange={(e) => {setCurrentMonth(e.target.value); changeMonth(e,e.target.value)}}
+                  onChange={(e) => {
+                    setCurrentMonth(e.target.value);
+                    changeMonth(e, e.target.value);
+                  }}
                 >
-                                <option value="DEFAULT" disabled hidden>
-                Please Choose...
-              </option>
-                  {month.map((t) => (
-                    <option  value={t.month}>
-                      {t.month}
-                    </option>
+                  <option value="DEFAULT" disabled hidden>
+                    Please Choose...
+                  </option>
+                  {month.map((t, index) => (
+                    <option key={index} value={t.month}>{t.month}</option>
                   ))}
                 </select>
               </form>
@@ -376,18 +396,30 @@ function MonthTrack() {
           <div className="card">
             <p className="card--title">Bills throught the month</p>
             <br />
-            <div className="tableWrapper">
+            <div className="tableWrapper align-card">
               <table>
                 <thead>
                   <tr>
                     <th className="rowHeader">Company</th>
                     <th className="rowHeader">Title</th>
                     <th className="rowHeader">Price ($)</th>
-                    <th className="rowHeader">Tag</th>
+                    <th className="rowHeader">Day</th>
                     <th className="rowHeader rowDel">Delete</th>
                   </tr>
                 </thead>
-                <tbody>{rows}</tbody>
+                <tbody>
+                  {entries[0].title === "None" ? (
+                    <tr>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                  ) : (
+                    rows
+                  )}
+                </tbody>
               </table>
             </div>
           </div>

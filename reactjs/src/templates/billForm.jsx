@@ -139,7 +139,7 @@ function BillForm() {
     return function cleanup() {
       mounted = false;
     };
-  }, []);
+  }, [isDone]);
 
   // Effect hook to fetch all registerd tag names on database
   useEffect(() => {
@@ -167,7 +167,7 @@ function BillForm() {
     return function cleanup() {
       mounted = false;
     };
-  }, []);
+  }, [isDone]);
 
   // Effect hook to render conditionally the "company" and "tag" inputs
   useEffect(() => {

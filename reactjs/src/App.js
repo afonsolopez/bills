@@ -112,18 +112,25 @@ function App() {
     };
   }, []);
 
+  const monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
+const d = new Date();
+let monthName = monthNames[d.getMonth()];
+
   return (
     <div className="grid-container--box">
       <div className="grid-container--box--top">
         <NewBill />
         <LatestBills bills={entries} />
         <div className="grid-container--box--top--double">
-          <TotalSpent total={bigNumbers[0].total} />
-          <RemainingDays days={bigNumbers[0].remainingDays} />
+          <TotalSpent total={bigNumbers[0].total} monthName={monthName} />
+          <RemainingDays days={bigNumbers[0].remainingDays} monthName={monthName} />
         </div>
       </div>
       <div className="grid-container--box--bottom">
-        <MonthChart bills={state} />
+        <MonthChart bills={state} monthName={monthName} />
       </div>
     </div>
   );

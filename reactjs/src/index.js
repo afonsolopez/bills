@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Sidebar from "./molecules/sidebar";
 import BillForm from "./templates/billForm";
 import MonthTrack from "./templates/monthTrack";
+import Info from "./templates/info";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -16,6 +17,9 @@ ReactDOM.render(
         <Sidebar />
 
         <Switch>
+        <Route path="/info">
+            <Info />
+          </Route>
         <Route path="/month">
             <MonthTrack />
           </Route>

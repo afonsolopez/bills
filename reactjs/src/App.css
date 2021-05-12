@@ -42,7 +42,16 @@
   grid-template-rows: repeat(2, 1fr);
   gap: 16px 16px;
 }
-
+.grid-container--box--info {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  gap: 16px 16px;
+  height: 100%;
+  width: 100%;
+  /* background-color: cadetblue; */
+  padding: 16px;
+}
 /* Card */
 .card {
   background: #ffffff;
@@ -239,4 +248,16 @@
 
 .rowDel {
   width: 64px;
+}
+
+.align-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width:  100%;
+  height: 100%;
+}
+
+strong {
+  color: var(--variable);
 }

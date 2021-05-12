@@ -30,6 +30,7 @@ function LatestBills(props) {
   return (
     <div className="card">
       <p className="card--title">Latest bills</p>
+      <div className="align-card">
       <table>
         <thead>
           <tr>
@@ -39,6 +40,7 @@ function LatestBills(props) {
         </thead>
         <tbody>{rows}</tbody>
       </table>
+      </div>
       <ButtonText title="See more" path="/month" />
     </div>
   );
