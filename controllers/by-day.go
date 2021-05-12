@@ -61,7 +61,7 @@ func GetMonthBillsByDay(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Println(timeStamp, total)
+		// log.Println(timeStamp, total)
 		// Generate a single Bill struct
 		item := models.ByDay{
 			TimeStamp: strconv.Itoa(timeStamp.Day()),

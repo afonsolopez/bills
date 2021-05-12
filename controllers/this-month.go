@@ -15,6 +15,8 @@ func GetThisMonthBills(w http.ResponseWriter, r *http.Request) {
 
 	var res []models.Bill
 
+	_, firstDay, lastDay := functions.ConditionalDate(w, r)
+
 	// Declare all the expected results variables in order
 	var (
 		id         int
@@ -24,12 +26,6 @@ func GetThisMonthBills(w http.ResponseWriter, r *http.Request) {
 		tag        string
 		time_stamp time.Time
 	)
-
-	// Get today's date
-	now := time.Now()
-	// Get the first day of the current month date
-	monthWorker := functions.MonthWorker{Month: functions.Month{Day: now, Gap: 1}}
-	firstOfMonth := monthWorker.FirstOfMonth()
 
 	// Make a query on database
 	stmt, err := setup.DB.Prepare(`
@@ -52,7 +48,7 @@ func GetThisMonthBills(w http.ResponseWriter, r *http.Request) {
 	// Closes the rows variable section (good practice)
 	defer stmt.Close()
 	// Query on database using the stmt SQL and passing two datetime into strings to it
-	rows, err := stmt.Query(firstOfMonth.String()[0:10], now.String()[0:10])
+	rows, err := stmt.Query(firstDay, lastDay)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -66,7 +62,7 @@ func GetThisMonthBills(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Println(id, title, price, company, tag, time_stamp)
+		// log.Println(id, title, price, company, tag, time_stamp)
 		// Generate a single Bill struct
 		item := models.Bill{
 			Id:        id,

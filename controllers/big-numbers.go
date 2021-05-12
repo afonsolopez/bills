@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/afonsolopez/bills/functions"
 	"github.com/afonsolopez/bills/models"
@@ -15,26 +14,22 @@ func GetBigNumbers(w http.ResponseWriter, r *http.Request) {
 
 	var res []models.BigNumbers
 
+	monthWorker, firstDay, lastDay := functions.ConditionalDate(w, r)
+
 	// Declare all the expected results variables in order
 	var (
-		remainingDays int
-		total         float64
+		// remainingDays int
+		total float64
 	)
-
-	// Get today's date
-	now := time.Now()
-	// Get the first day of the current month date
-	monthWorker := functions.MonthWorker{Month: functions.Month{Day: now, Gap: 1}}
-	firstOfMonth := monthWorker.FirstOfMonth()
 
 	// Prepare a query on database with two datetime arguments
 	stmt, err := setup.DB.Prepare(`
-	SELECT SUM(b2.price) AS total
-	FROM bills b2 
-	LEFT JOIN dates d2 
-	ON b2.date_id = d2.id
-	WHERE d2.time_stamp
-	BETWEEN ? AND ?
+		SELECT SUM(b2.price) AS total
+		FROM bills b2 
+		LEFT JOIN dates d2 
+		ON b2.date_id = d2.id
+		WHERE d2.time_stamp
+		BETWEEN ? AND ?
 	`)
 	if err != nil {
 		log.Fatal(err)
@@ -44,7 +39,7 @@ func GetBigNumbers(w http.ResponseWriter, r *http.Request) {
 	defer stmt.Close()
 
 	// Query on database using the stmt SQL and passing two datetime into strings to it
-	rows, err := stmt.Query(firstOfMonth.String()[0:10], now.String()[0:10])
+	rows, err := stmt.Query(firstDay, lastDay)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -58,7 +53,7 @@ func GetBigNumbers(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Println(remainingDays, total)
+		// log.Println(remainingDays, total)
 		// Generate a single Bill struct
 		item := models.BigNumbers{
 			RemainingDays: monthWorker.RemainingDays(),

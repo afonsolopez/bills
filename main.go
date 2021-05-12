@@ -40,6 +40,8 @@ func main() {
 
 	http.HandleFunc("/tags", controllers.GetAllTags)
 
+	http.HandleFunc("/months", controllers.GetAllMonths)
+
 	http.HandleFunc("/big-numbers", controllers.GetBigNumbers)
 
 	http.HandleFunc("/latest", controllers.GetLatestBills)

@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"math"
 	"net/http"
@@ -17,18 +16,14 @@ func GetMonthBillsByTag(w http.ResponseWriter, r *http.Request) {
 
 	var res []models.ByTag
 
+	_, firstDay, lastDay := functions.ConditionalDate(w, r)
+
 	// Declare all the expected results variables in order
 	var (
 		tag       string
 		total     float64
 		timeStamp time.Time
 	)
-
-	// Get today's date
-	now := time.Now()
-	// Get the first day of the current month date
-	monthWorker := functions.MonthWorker{Month: functions.Month{Day: now, Gap: 1}}
-	firstOfMonth := monthWorker.FirstOfMonth()
 
 	// Make a query on database
 	stmt, err := setup.DB.Prepare(`
@@ -50,7 +45,7 @@ func GetMonthBillsByTag(w http.ResponseWriter, r *http.Request) {
 	defer stmt.Close()
 
 	// Query on database using the stmt SQL and passing two datetime into strings to it
-	rows, err := stmt.Query(firstOfMonth.String()[0:10], now.String()[0:10])
+	rows, err := stmt.Query(firstDay, lastDay)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -62,7 +57,6 @@ func GetMonthBillsByTag(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		err := rows.Scan(&tag, &total, &timeStamp)
 		if err != nil {
-			fmt.Println("caiu na toca do rato")
 			log.Fatal(err)
 		}
 		log.Println(tag, total)

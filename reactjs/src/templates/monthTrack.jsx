@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 
 import ".././App.css";
+import "./monthTrack.css";
 import TotalSpent from "../molecules/home/totalSpent";
-import RemainingDays from "../molecules/home/remainingDays";
 import MonthChart from "../molecules/month/monthChart";
 
 function MonthTrack() {
@@ -15,7 +15,7 @@ function MonthTrack() {
     },
   ]);
   const [state, setState] = useState({
-    time_stamp: "",
+    tag: "",
     total: 0.0,
   });
   const [entries, setEntries] = useState([
@@ -32,9 +32,13 @@ function MonthTrack() {
   const [modalOpen, setModalOpen] = useState(false);
 
   const [message, setMessage] = useState({
-    msg: "xxx",
+    msg: "",
     bill_id: 0,
   });
+  const [month, setMonth] = useState([
+    {month: ""}
+  ])
+  const [currentMonth, setCurrentMonth] = useState("")
 
   // Change the display mode of the modal based on it state
   const checkModal = (modalOpen) => {
@@ -174,6 +178,119 @@ function MonthTrack() {
     };
   }, [message]);
 
+  // Fetch data for the month graph
+  useEffect(() => {
+    let mounted = true;
+
+    fetch(`${process.env.REACT_APP_API_PATH || ""}/months`, {
+      // mode: 'no-cors',
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    }).then((response) => {
+      if (mounted) {
+        if (response.ok) {
+          response.json().then((json) => {
+            if (json !== null) {
+              setMonth(json);
+            }
+            console.log(json);
+          });
+        }
+      }
+    });
+
+    return function cleanup() {
+      mounted = false;
+    };
+  }, []);
+
+  const changeMonth = (e, date) => {
+    e.preventDefault();
+
+    fetch(`${process.env.REACT_APP_API_PATH || ""}/month`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: JSON.stringify({
+        month: date.slice(5,7),
+        year: date.slice(0,4)
+      }),
+    })
+      // Submit form response if 201 status
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((json) => {
+            if (json !== null) {
+              setEntries(json);
+            }
+            console.log(json);
+          });
+        }
+      })
+      // Submit form error catch response
+      .catch(function (error) {
+        console.log(error);
+      });
+
+      fetch(`${process.env.REACT_APP_API_PATH || ""}/big-numbers`, {
+        method: "post",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: JSON.stringify({
+          month: date.slice(5,7),
+          year: date.slice(0,4)
+        }),
+      })
+        // Submit form response if 201 status
+        .then((response) => {
+          if (response.ok) {
+            response.json().then((json) => {
+              if (json !== null) {
+                setBigNumbers(json);
+              }
+              console.log(json);
+            });
+          }
+        })
+        // Submit form error catch response
+        .catch(function (error) {
+          console.log(error);
+        });
+
+        fetch(`${process.env.REACT_APP_API_PATH || ""}/by-tag`, {
+          method: "post",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: JSON.stringify({
+            month: date.slice(5,7),
+            year: date.slice(0,4)
+          }),
+        })
+          // Submit form response if 201 status
+          .then((response) => {
+            if (response.ok) {
+              response.json().then((json) => {
+                if (json !== null) {
+                  setState(json);
+                }
+                console.log(json);
+              });
+            }
+          })
+          // Submit form error catch response
+          .catch(function (error) {
+            console.log(error);
+          });
+
+  };
+
+
+
   let rows;
   if (entries) {
     let billsList = entries;
@@ -227,8 +344,29 @@ function MonthTrack() {
         <div className="grid-container--box--top__2">
           <MonthChart bills={state} />
           <div className="grid-container--box--top--double">
+            <div className="card">
+              <p className="card--title">Select a month</p>
+              <br />
+
+              <form>
+                <select
+                  name="month"
+                  value={currentMonth || "DEFAULT"}
+                  onChange={(e) => {setCurrentMonth(e.target.value); changeMonth(e,e.target.value)}}
+                >
+                                <option value="DEFAULT" disabled hidden>
+                Please Choose...
+              </option>
+                  {month.map((t) => (
+                    <option  value={t.month}>
+                      {t.month}
+                    </option>
+                  ))}
+                </select>
+              </form>
+            </div>
+
             <TotalSpent total={bigNumbers[0].total} />
-            <RemainingDays days={bigNumbers[0].remainingDays} />
           </div>
         </div>
         <div className="grid-container--box--bottom">

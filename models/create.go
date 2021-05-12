@@ -30,6 +30,15 @@ type BillID struct {
 	ID uint `json:"id"`
 }
 
+type DateQuery struct {
+	Month string `json:"month"`
+	Year  string `json:"year"`
+}
+
+type MonthSelector struct {
+	Month string `json:"month"`
+}
+
 type Res struct {
 	Title        string `json:"title"`
 	Price        string `json:"price"`

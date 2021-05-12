@@ -38,7 +38,7 @@ func GetAllTags(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Println(id, name)
+		// log.Println(id, name)
 		// Generate a single Bill struct
 		item := models.Tags{
 			ID:   id,

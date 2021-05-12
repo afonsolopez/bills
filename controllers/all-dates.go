@@ -9,21 +9,20 @@ import (
 	"github.com/afonsolopez/bills/setup"
 )
 
-func GetAllCompanies(w http.ResponseWriter, r *http.Request) {
+func GetAllMonths(w http.ResponseWriter, r *http.Request) {
 
-	var res []models.Companies
+	var res []models.MonthSelector
 
 	// Declare all the expected results variables in order
 	var (
-		id   uint
-		name string
+		month string
 	)
 
 	// Query on database using the stmt SQL and passing two datetime into strings to it
 	rows, err := setup.DB.Query(`
-		SELECT DISTINCT id, name
-		FROM companies c2 
-		ORDER BY name ASC
+		SELECT strftime('%Y-%m-01', d.time_stamp) as Month
+		FROM dates d
+		GROUP BY strftime('%Y-%m-01', Month)
 	`)
 	if err != nil {
 		log.Fatal(err)
@@ -34,15 +33,14 @@ func GetAllCompanies(w http.ResponseWriter, r *http.Request) {
 
 	// Loops over the query results
 	for rows.Next() {
-		err := rows.Scan(&id, &name)
+		err := rows.Scan(&month)
 		if err != nil {
 			log.Fatal(err)
 		}
 		// log.Println(id, name)
 		// Generate a single Bill struct
-		item := models.Companies{
-			ID:   id,
-			Name: name,
+		item := models.MonthSelector{
+			Month: month,
 		}
 		// Append this Bill struct to the response slice
 		res = append(res, item)

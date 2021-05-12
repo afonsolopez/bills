@@ -49,7 +49,7 @@ func GetLatestBills(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Println(id, title, price, company, tag, time_stamp)
+		// log.Println(id, title, price, company, tag, time_stamp)
 		// Generate a single Bill struct
 		item := models.Bill{
 			Id:        id,
