@@ -230,6 +230,7 @@ function MonthTrack() {
     };
   }, [delCounter]);
 
+  // Fetch data from another month
   const changeMonth = (e, date) => {
     e.preventDefault();
 
@@ -312,6 +313,7 @@ function MonthTrack() {
       });
   };
 
+  // Render each line of the bills table
   let rows;
   if (entries) {
     let billsList = entries;

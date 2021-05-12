@@ -11,6 +11,7 @@ import (
 
 func GetAllTags(w http.ResponseWriter, r *http.Request) {
 
+	// Slice to store the response content
 	var res []models.Tags
 
 	// Declare all the expected results variables in order

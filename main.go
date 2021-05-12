@@ -22,19 +22,21 @@ import (
 
 var err error
 
+// Compiles all react data to binary
+
 //go:embed reactjs/build
 var f embed.FS
 
 func main() {
 
-	// Databse connection
-	// var err error
+	// Setup the database connection
 	setup.DB, err = sql.Open("sqlite3",
 		"./data.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// SQL command to create all database tables if no exists
 	createDB := `
 	CREATE TABLE IF NOT EXISTS bills (id integer,
 		company_id integer,
@@ -60,13 +62,16 @@ func main() {
 		PRIMARY KEY (id));
 	`
 
+	// Create a context
 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelfunc()
 
+	// Execute the database/tables creation SQL command
 	mount, err := setup.DB.ExecContext(ctx, createDB)
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Count each row affectd by the database/tables creation
 	rows, err := mount.RowsAffected()
 	if err != nil {
 		log.Fatal(err)
@@ -74,43 +79,53 @@ func main() {
 
 	log.Printf("Rows affected when creating table: %d", rows)
 
-	// Handle to ./reactjs/build folder on root path
+	// Define the root app path./reactjs/build
 	http.HandleFunc("/", rootHandler)
 
-	http.HandleFunc("/companies", controllers.GetAllCompanies)
+	// Get all companies
+	http.HandleFunc("/companies", controllers.GetAllCompanies) // [GET]
 
-	http.HandleFunc("/tags", controllers.GetAllTags)
+	// Gell all tags
+	http.HandleFunc("/tags", controllers.GetAllTags) // [GET]
 
-	http.HandleFunc("/months", controllers.GetAllMonths)
+	// Get all months with registerd bill
+	http.HandleFunc("/months", controllers.GetAllMonths) // [GET]
 
-	http.HandleFunc("/big-numbers", controllers.GetBigNumbers)
+	// Returns the total of money spent on that month and days left also on that month
+	http.HandleFunc("/big-numbers", controllers.GetBigNumbers) // [GET/POST]
 
-	http.HandleFunc("/latest", controllers.GetLatestBills)
+	// Latest registered bills
+	http.HandleFunc("/latest", controllers.GetLatestBills) // [GET]
 
-	http.HandleFunc("/by-day", controllers.GetMonthBillsByDay)
+	// Get all bills grouped by same day
+	http.HandleFunc("/by-day", controllers.GetMonthBillsByDay) // [GET]
 
-	http.HandleFunc("/by-tag", controllers.GetMonthBillsByTag)
+	// Get all bills grouped by same tag
+	http.HandleFunc("/by-tag", controllers.GetMonthBillsByTag) // [GET/POST]
 
-	http.HandleFunc("/month", controllers.GetThisMonthBills)
+	// Get all bills from a month
+	http.HandleFunc("/month", controllers.GetThisMonthBills) // [GET/POST]
 
-	http.HandleFunc("/create", controllers.CreateNewBill)
+	// Create a new bill
+	http.HandleFunc("/create", controllers.CreateNewBill) // [POST]
 
-	http.HandleFunc("/delete", controllers.DeleteBill)
+	// Delete a bill
+	http.HandleFunc("/delete", controllers.DeleteBill) // [DELETE]
 
-	// Run server at port 8000 as goroutine
-	// for non-block working
+	// Running a server as goroutine (for non-blocking working)
 	go http.ListenAndServe(":8000", nil)
 
-	// Let's open window app with:
-	debug := true
+	// Window setup
+	debug := true // Devtools on/off
 	w := webview.New(debug)
 	//	defer w.Destroy()
-	w.SetTitle("Bills - Beta")             //  - name: Golang App
-	w.SetSize(800, 600, webview.HintFixed) //  - sizes: 800x600 px
-	w.Navigate("http://localhost:8000")    //  - address: http://localhost:8000
+	w.SetTitle("Bills - 0.1a")             // App name
+	w.SetSize(800, 600, webview.HintFixed) // Window size 800x600px (w/o resize)
+	w.Navigate("http://localhost:8000")    // Running on: http://localhost:8000
 	w.Run()
 }
 
+// Handler to make possible to render SPA's
 // https://github.com/akmittal/go-embed/blob/main/main_extended.go
 func rootHandler(rw http.ResponseWriter, req *http.Request) {
 	upath := req.URL.Path

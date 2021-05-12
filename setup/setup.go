@@ -3,7 +3,6 @@ package setup
 import "database/sql"
 
 var (
-	// DB is the connection handle
-	// for the database
+	// Database handler
 	DB *sql.DB
 )

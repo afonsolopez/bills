@@ -7,29 +7,15 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/afonsolopez/bills/models"
 	"github.com/afonsolopez/bills/setup"
 )
 
-func AfterCreate(str string) time.Time {
-	layout := "2006-01-02"
-	t, err := time.Parse(layout, str)
-	if err != nil {
-		fmt.Println(err)
-	}
-	return t
-}
-
 // CreateNewBill ...
 func CreateNewBill(w http.ResponseWriter, r *http.Request) {
 
 	var (
-		// allDates  []models.Dates
-		// title     string
-		// price     float64
-
 		companyID   uint
 		companyName string
 

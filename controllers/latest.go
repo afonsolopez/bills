@@ -12,6 +12,7 @@ import (
 
 func GetLatestBills(w http.ResponseWriter, r *http.Request) {
 
+	// Slice to store the response content
 	var res []models.Bill
 
 	// Declare all the expected results variables in order

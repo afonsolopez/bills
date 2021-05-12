@@ -33,6 +33,7 @@ func DeleteBill(w http.ResponseWriter, r *http.Request) {
 	// Query bill info
 	//=============================================================================
 
+	// Declare all the expected results variables in order
 	var (
 		id        uint
 		title     string
@@ -81,6 +82,8 @@ func DeleteBill(w http.ResponseWriter, r *http.Request) {
 	//=============================================================================
 	// Query tag info
 	//=============================================================================
+
+	// Declare all the expected results variables in order
 	var (
 		tags int
 	)
@@ -105,6 +108,7 @@ func DeleteBill(w http.ResponseWriter, r *http.Request) {
 	// Query company info
 	//=============================================================================
 
+	// Declare all the expected results variables in order
 	var (
 		companies int
 	)
@@ -129,6 +133,7 @@ func DeleteBill(w http.ResponseWriter, r *http.Request) {
 	// Query date info
 	//=============================================================================
 
+	// Declare all the expected results variables in order
 	var (
 		dates int
 	)

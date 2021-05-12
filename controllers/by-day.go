@@ -15,6 +15,7 @@ import (
 
 func GetMonthBillsByDay(w http.ResponseWriter, r *http.Request) {
 
+	// Slice to store the response content
 	var res []models.ByDay
 
 	// Declare all the expected results variables in order

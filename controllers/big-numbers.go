@@ -13,13 +13,14 @@ import (
 
 func GetBigNumbers(w http.ResponseWriter, r *http.Request) {
 
+	// Slice to store the response content
 	var res []models.BigNumbers
 
+	// Function to conditionally get the first and last day of a month and they month worker
 	monthWorker, firstDay, lastDay := functions.ConditionalDate(w, r)
 
 	// Declare all the expected results variables in order
 	var (
-		// remainingDays int
 		total float64
 	)
 

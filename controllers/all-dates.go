@@ -11,6 +11,7 @@ import (
 
 func GetAllMonths(w http.ResponseWriter, r *http.Request) {
 
+	// Slice to store the response content
 	var res []models.MonthSelector
 
 	// Declare all the expected results variables in order

@@ -13,8 +13,10 @@ import (
 
 func GetThisMonthBills(w http.ResponseWriter, r *http.Request) {
 
+	// Slice to store the response content
 	var res []models.Bill
 
+	// Function to conditionally get the first and last day of a month
 	_, firstDay, lastDay := functions.ConditionalDate(w, r)
 
 	// Declare all the expected results variables in order
